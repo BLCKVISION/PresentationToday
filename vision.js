@@ -215,6 +215,13 @@ document.addEventListener("DOMContentLoaded", () => {
             goTo(window.cur - 1);
         } else if (e.key === 'g' || e.key === 'G') {
             window.open('guion.html', '_blank');
+        } else if (e.key === 'f' || e.key === 'F') {
+            e.preventDefault();
+            if (!document.fullscreenElement) {
+                document.documentElement.requestFullscreen().catch(() => {});
+            } else {
+                document.exitFullscreen().catch(() => {});
+            }
         } else if (e.code === 'Space') {
             e.preventDefault();
             // On Slide 2 (index 2: Rendimiento & Escala), space toggles the scale demo
@@ -330,6 +337,28 @@ document.addEventListener("DOMContentLoaded", () => {
     // Initial KaTeX math formatting
     renderMath();
     initCartesianGraph();
+
+    // ─── 5. DESKTOP PRESENTATION AUTOSCALER ───
+    // Automatically fits the widescreen desktop slide layout onto any screen (projectors, TVs, tablets, scaled displays)
+    function autoScaleDeck() {
+        const w = window.innerWidth;
+        const h = window.innerHeight;
+        const targetW = 1260;
+        const targetH = 750;
+
+        let scale = 1;
+        if (w < targetW || h < targetH) {
+            const scaleW = w / targetW;
+            const scaleH = h / targetH;
+            scale = Math.min(scaleW, scaleH);
+            scale = Math.max(0.65, Math.min(scale, 1.15));
+        }
+
+        document.documentElement.style.setProperty('--deck-scale', scale.toFixed(3));
+    }
+
+    window.addEventListener('resize', autoScaleDeck);
+    autoScaleDeck();
 });
 
 // Helper for rendering KaTeX equations safely

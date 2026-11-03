@@ -12,6 +12,7 @@ Presentación interactiva y guión oficial sobre **Big O: El Costo Real del Crec
 ## ⌨️ Atajos de Teclado y Controles
 
 - **Doble Clic** (o <kbd>Enter</kbd> / <kbd>Espacio</kbd> / <kbd>B</kbd>): Revela la presentación desde la pantalla en negro inicial.
+- <kbd>F</kbd>: Activar / Salir de Pantalla Completa (Full Screen para proyectores).
 - <kbd>B</kbd>: Alternar pantalla negra (Blackout) en cualquier momento de la presentación.
 - <kbd>↓</kbd> / <kbd>→</kbd> / <kbd>AvPág</kbd>: Siguiente diapositiva.
 - <kbd>↑</kbd> / <kbd>←</kbd> / <kbd>RePág</kbd>: Diapositiva anterior.

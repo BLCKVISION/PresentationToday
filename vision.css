@@ -925,19 +925,23 @@ canvas {
     pointer-events: none;
 }
 
-/* ─── INNER — centrado vertical seguro ─── */
+/* ─── INNER — CENTRADO Y ESCALADO ADAPTATIVO DE ESCRITORIO ─── */
 .inner {
     flex: 1;
     width: 100%;
-    max-width: 1260px;
+    max-width: 1280px;
     margin: 0 auto;
     display: flex;
     flex-direction: column;
-    gap: 14px;
+    gap: clamp(8px, 1.4vh, 16px);
     position: relative;
     z-index: 2;
-    padding: 66px clamp(24px, 5vw, 80px) 44px !important;
+    padding: clamp(36px, 5.5vh, 60px) clamp(20px, 4vw, 64px) clamp(28px, 4.5vh, 48px) !important;
     justify-content: center;
+    box-sizing: border-box;
+    transform: scale(var(--deck-scale, 1));
+    transform-origin: center center;
+    transition: transform 0.18s ease-out;
 }
 
 /* ─── TYPE ─── */
@@ -2146,42 +2150,23 @@ h3 {
     z-index: 1;
 }
 
-@media(max-width:1000px) {
-
-    .g4,
-    .g3,
-    .edt-grid {
-        grid-template-columns: 1fr 1fr;
-    }
-
-    .g2,
-    .limit-grid {
-        grid-template-columns: 1fr;
-    }
-
-    .pyr-block:nth-child(1) {
-        clip-path: polygon(18% 0%, 82% 0%, 100% 100%, 0% 100%);
-        padding: 28px 60px;
-    }
+/* ─── DESKTOP FIRST PRESENTATION GRID PRESERVATION ─── */
+.g2 {
+    display: grid !important;
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    gap: clamp(12px, 1.6vw, 20px) !important;
 }
 
-@media(max-width:600px) {
-    h2 {
-        font-size: 26px;
-    }
+.g3 {
+    display: grid !important;
+    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+    gap: clamp(10px, 1.4vw, 18px) !important;
+}
 
-    .g4,
-    .g3,
-    .g2,
-    .edt-grid,
-    .limit-grid {
-        grid-template-columns: 1fr;
-    }
-
-    .gantt-header,
-    .gantt-row {
-        grid-template-columns: 100px repeat(8, 1fr);
-    }
+.g4 {
+    display: grid !important;
+    grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+    gap: clamp(8px, 1.2vw, 16px) !important;
 }
 
 /* --- OUTRO HOVER PREVIEW --- */
@@ -3396,48 +3381,28 @@ h3 {
     color: var(--txt1);
 }
 
-/* ─── RESPONSIVE BREAKPOINTS ─── */
-@media (max-width: 1024px) {
-    .formula-breakdown-grid {
-        grid-template-columns: repeat(3, 1fr);
-    }
-    .inequality-live-box {
-        grid-template-columns: 1fr;
-        text-align: center;
-    }
-    .ineq-col {
-        align-items: center;
-    }
+/* ─── RESPONSIVE PRESERVATION: ENSURE DESKTOP PRESENTATION LAYOUT ─── */
+.formula-breakdown-grid {
+    display: grid !important;
+    grid-template-columns: repeat(5, minmax(0, 1fr)) !important;
+    gap: clamp(6px, 0.8vw, 10px) !important;
 }
 
-@media (max-width: 768px) {
-    .deck-brand-pill {
-        top: 18px;
-        left: 20px;
-        padding: 4px 10px;
-    }
-    .brand-text {
-        font-size: 9px;
-    }
-    #counter {
-        top: 18px;
-        right: 20px;
-    }
-    .formula-breakdown-grid {
-        grid-template-columns: 1fr;
-    }
-    .scale-ctrl {
-        flex-direction: column;
-        align-items: flex-start;
-    }
-    .sim-header {
-        flex-direction: column;
-        align-items: flex-start;
-    }
-    .sub-header {
-        flex-direction: column;
-        align-items: flex-start;
-    }
+.inequality-live-box {
+    display: grid !important;
+    grid-template-columns: 1fr 140px 1fr !important;
+    gap: clamp(10px, 1.5vw, 18px) !important;
+    text-align: left !important;
+}
+
+.scale-ctrl,
+.sim-header,
+.sub-header,
+.pipeline-header {
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: center !important;
+    justify-content: space-between !important;
 }
 
 /* ==========================================================================
@@ -3446,10 +3411,10 @@ h3 {
 
 /* ─── SLIDE 1: INTRO CARDS ─── */
 .intro-card {
-    padding: 2.2rem 2.4rem;
+    padding: clamp(1.2rem, 2vh, 1.8rem) clamp(1.4rem, 2vw, 2.2rem);
     display: flex;
     flex-direction: column;
-    gap: 14px;
+    gap: 12px;
 }
 
 .intro-text {
@@ -3600,10 +3565,10 @@ h3 {
 
 /* ─── SLIDE 3: TALL CONTRAST CARDS ─── */
 .compare-tall-card {
-    padding: 2.2rem 2.4rem;
+    padding: clamp(1.2rem, 2vh, 1.8rem) clamp(1.4rem, 2vw, 2.2rem);
     display: flex;
     flex-direction: column;
-    gap: 14px;
+    gap: 12px;
 }
 
 .mono-title-lg {
