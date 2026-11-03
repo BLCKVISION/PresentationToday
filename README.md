@@ -15,3 +15,4 @@ Presentación interactiva y guión oficial sobre **Big O: El Costo Real del Crec
 - <kbd>↑</kbd> / <kbd>←</kbd> / <kbd>RePág</kbd>: Diapositiva anterior.
 - <kbd>Espacio</kbd>: Siguiente diapositiva (en Diapositiva 02 alterna entre $n = 10$ y $n = 100.000$).
 - <kbd>G</kbd>: Abrir el Guión Oficial en una nueva pestaña.
+
