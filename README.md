@@ -4,7 +4,7 @@ Presentación interactiva y guión oficial sobre **Big O: El Costo Real del Crec
 
 ## 🚀 Contenido del Proyecto
 
-- **`vision.html`**: Presentación interactiva de 12 diapositivas con animaciones GSAP, renderizado matemático KaTeX, simulador de hardware atómico, laboratorio de simplificación *Fade-Out* en vivo y visualización geométrica asintótica interactiva en SVG. Incluye botón directo al guión en la esquina inferior izquierda.
+- **`index.html`**: Presentación interactiva de 12 diapositivas con animaciones GSAP, renderizado matemático KaTeX, simulador de hardware atómico, laboratorio de simplificación *Fade-Out* en vivo y visualización geométrica asintótica interactiva en SVG. Incluye botón directo al guión en la esquina inferior izquierda.
 - **`guion.html`**: Guión oficial coordinado para 4 expositores, con textos hablados exactos, indicaciones de interacción en pantalla, pautas de lenguaje corporal, claves conceptuales y banco de respuestas para preguntas del jurado.
 - **`vision.css`**: Sistema de diseño visual y estilos futuristas para la presentación.
 - **`vision.js`**: Controlador de navegación, transiciones de diapositivas y simulaciones interactivas.
