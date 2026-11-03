@@ -1,0 +1,1234 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Guión Oficial de Exposición — Big O: El Costo Real del Crecimiento</title>
+    
+    <!-- Google Fonts: Inter, Outfit, DM Mono -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Mono:ital,wght@0,400;0,500;1,400&family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    
+    <!-- KaTeX for crisp mathematical formulas -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"
+            onload="renderMathInElement(document.body, { delimiters: [{left: '$$', right: '$$', display: true}, {left: '$', right: '$', display: false}] });"></script>
+
+    <style>
+        :root {
+            --bg: #090a0f;
+            --surface: #0f111a;
+            --surface2: #161824;
+            --surface-hover: #1c1f2e;
+            --border: rgba(255, 255, 255, 0.08);
+            --border-highlight: rgba(113, 112, 255, 0.35);
+            
+            --txt1: #f3f4f6;
+            --txt2: #9ca3af;
+            --txt3: #6b7280;
+            
+            --accent: #7170ff;
+            --accent-glow: rgba(113, 112, 255, 0.25);
+            
+            --c-exp1: #10b981;
+            --c-exp1-glow: rgba(16, 185, 129, 0.15);
+            --c-exp2: #06b6d4;
+            --c-exp2-glow: rgba(6, 182, 212, 0.15);
+            --c-exp3: #8b5cf6;
+            --c-exp3-glow: rgba(139, 92, 246, 0.15);
+            --c-exp4: #f59e0b;
+            --c-exp4-glow: rgba(245, 158, 11, 0.15);
+            
+            --font-display: 'Outfit', -apple-system, sans-serif;
+            --font-body: 'Inter', -apple-system, sans-serif;
+            --font-mono: 'DM Mono', monospace;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: var(--font-body);
+            background-color: var(--bg);
+            color: var(--txt1);
+            line-height: 1.75;
+            -webkit-font-smoothing: antialiased;
+            padding: 40px 20px 80px;
+            display: flex;
+            justify-content: center;
+        }
+
+        .container {
+            max-width: 920px;
+            width: 100%;
+        }
+
+        /* ─── HEADER DE PRESENTACIÓN ─── */
+        .doc-header {
+            margin-bottom: 50px;
+            padding-bottom: 30px;
+            border-bottom: 1px solid var(--border);
+            position: relative;
+        }
+
+        .header-top {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 16px;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        .category-chip {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-family: var(--font-mono);
+            font-size: 11px;
+            font-weight: 500;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            color: var(--accent);
+            background: rgba(113, 112, 255, 0.1);
+            border: 1px solid rgba(113, 112, 255, 0.25);
+            padding: 4px 12px;
+            border-radius: 999px;
+        }
+
+        .time-chip {
+            font-family: var(--font-mono);
+            font-size: 12px;
+            color: var(--txt2);
+            background: var(--surface2);
+            padding: 4px 12px;
+            border-radius: 6px;
+            border: 1px solid var(--border);
+        }
+
+        h1 {
+            font-family: var(--font-display);
+            font-size: 2.35rem;
+            font-weight: 800;
+            letter-spacing: -0.02em;
+            color: #ffffff;
+            line-height: 1.2;
+            margin-bottom: 10px;
+        }
+
+        .doc-desc {
+            font-size: 1.05rem;
+            color: var(--txt2);
+            max-width: 780px;
+            margin-bottom: 24px;
+        }
+
+        /* Quick Nav Bar */
+        .speaker-nav {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .nav-btn {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            padding: 12px 14px;
+            border-radius: 10px;
+            text-decoration: none;
+            color: var(--txt1);
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            transition: all 0.2s ease;
+        }
+
+        .nav-btn:hover {
+            background: var(--surface2);
+            border-color: var(--border-highlight);
+            transform: translateY(-2px);
+        }
+
+        .nav-role {
+            font-family: var(--font-mono);
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: var(--txt3);
+        }
+
+        .nav-name {
+            font-family: var(--font-display);
+            font-size: 13px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .nav-name::before {
+            content: "";
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+        }
+
+        .nav-e1 .nav-name::before { background: var(--c-exp1); box-shadow: 0 0 8px var(--c-exp1); }
+        .nav-e2 .nav-name::before { background: var(--c-exp2); box-shadow: 0 0 8px var(--c-exp2); }
+        .nav-e3 .nav-name::before { background: var(--c-exp3); box-shadow: 0 0 8px var(--c-exp3); }
+        .nav-e4 .nav-name::before { background: var(--c-exp4); box-shadow: 0 0 8px var(--c-exp4); }
+
+        /* ─── SECCIÓN DE EXPOSITOR ─── */
+        .speaker-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 18px;
+            padding: 36px 36px 28px;
+            margin-bottom: 40px;
+            position: relative;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+            scroll-margin-top: 30px;
+        }
+
+        .speaker-banner {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 28px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid var(--border);
+            flex-wrap: wrap;
+            gap: 14px;
+        }
+
+        .speaker-identity {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+
+        .speaker-avatar {
+            width: 44px;
+            height: 44px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: var(--font-display);
+            font-weight: 900;
+            font-size: 18px;
+        }
+
+        .avatar-e1 { background: var(--c-exp1-glow); color: var(--c-exp1); border: 1px solid var(--c-exp1); }
+        .avatar-e2 { background: var(--c-exp2-glow); color: var(--c-exp2); border: 1px solid var(--c-exp2); }
+        .avatar-e3 { background: var(--c-exp3-glow); color: var(--c-exp3); border: 1px solid var(--c-exp3); }
+        .avatar-e4 { background: var(--c-exp4-glow); color: var(--c-exp4); border: 1px solid var(--c-exp4); }
+
+        .speaker-meta h2 {
+            font-family: var(--font-display);
+            font-size: 1.35rem;
+            font-weight: 700;
+            color: #ffffff;
+            line-height: 1.2;
+        }
+
+        .speaker-meta span {
+            font-size: 0.85rem;
+            color: var(--txt2);
+            font-family: var(--font-mono);
+        }
+
+        .speaker-slides-pill {
+            font-family: var(--font-mono);
+            font-size: 11px;
+            font-weight: 500;
+            padding: 5px 12px;
+            border-radius: 6px;
+            background: var(--surface2);
+            border: 1px solid var(--border);
+            color: var(--txt2);
+        }
+
+        /* ─── BLOQUE DE DIAPOSITIVA (SLIDE CHUNK) ─── */
+        .slide-block {
+            margin-bottom: 38px;
+            padding-left: 20px;
+            border-left: 2px solid var(--border);
+            position: relative;
+        }
+
+        .slide-block:last-child {
+            margin-bottom: 10px;
+        }
+
+        .slide-tag-row {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 12px;
+            flex-wrap: wrap;
+        }
+
+        .slide-badge {
+            font-family: var(--font-mono);
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            padding: 3px 9px;
+            border-radius: 4px;
+            background: rgba(255, 255, 255, 0.08);
+            color: #ffffff;
+            border: 1px solid rgba(255, 255, 255, 0.12);
+        }
+
+        .slide-title-label {
+            font-family: var(--font-display);
+            font-size: 1.08rem;
+            font-weight: 700;
+            color: #e5e7eb;
+        }
+
+        /* ─── TEXTO DEL DISCURSO ─── */
+        .speech-text {
+            font-size: 1.03rem;
+            color: #d1d5db;
+            margin-bottom: 16px;
+            text-align: left;
+            line-height: 1.8;
+        }
+
+        .speech-text strong {
+            color: #ffffff;
+            font-weight: 600;
+        }
+
+        /* ─── CUADROS DE CONSEJOS Y ACCIONES ─── */
+        /* 1. Control en Pantalla (Teclado / Clics) */
+        .screen-action {
+            background: rgba(113, 112, 255, 0.08);
+            border-left: 3px solid var(--accent);
+            padding: 12px 18px;
+            border-radius: 0 10px 10px 0;
+            margin: 16px 0;
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+        }
+
+        .action-icon {
+            font-size: 16px;
+            line-height: 1;
+            margin-top: 3px;
+        }
+
+        .action-body {
+            font-size: 0.92rem;
+            color: #c7d2fe;
+            line-height: 1.55;
+        }
+
+        .action-body strong {
+            color: #ffffff;
+        }
+
+        /* 2. Animación Visual en Pantalla */
+        .anim-cue {
+            background: rgba(6, 182, 212, 0.07);
+            border-left: 3px solid var(--c-exp2);
+            padding: 12px 18px;
+            border-radius: 0 10px 10px 0;
+            margin: 14px 0;
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+        }
+
+        .anim-cue .anim-body {
+            font-size: 0.91rem;
+            color: #a5f3fc;
+            line-height: 1.55;
+        }
+
+        .anim-cue .anim-body strong {
+            color: #ffffff;
+        }
+
+        /* 3. Puesta en Escena y Lenguaje Corporal */
+        .stage-cue {
+            background: rgba(245, 158, 11, 0.07);
+            border-left: 3px solid var(--c-exp4);
+            padding: 12px 18px;
+            border-radius: 0 10px 10px 0;
+            margin: 14px 0;
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+        }
+
+        .stage-cue .stage-body {
+            font-size: 0.91rem;
+            color: #fde68a;
+            line-height: 1.55;
+        }
+
+        .stage-cue .stage-body strong {
+            color: #ffffff;
+        }
+
+        /* 4. Clave Conceptual para Evaluación */
+        .speaker-tip {
+            background: rgba(16, 185, 129, 0.08);
+            border: 1px dashed rgba(16, 185, 129, 0.35);
+            border-radius: 8px;
+            padding: 10px 14px;
+            margin-top: 16px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 0.88rem;
+            color: #a7f3d0;
+        }
+
+        .speaker-tip .tip-label {
+            font-family: var(--font-mono);
+            font-weight: 700;
+            font-size: 10px;
+            text-transform: uppercase;
+            background: var(--c-exp1);
+            color: #064e3b;
+            padding: 2px 7px;
+            border-radius: 4px;
+            letter-spacing: 0.05em;
+            white-space: nowrap;
+        }
+
+        .kbd-chip {
+            display: inline-block;
+            font-family: var(--font-mono);
+            font-size: 10px;
+            font-weight: 700;
+            background: rgba(255, 255, 255, 0.15);
+            border: 1px solid rgba(255, 255, 255, 0.25);
+            color: #ffffff;
+            padding: 1px 6px;
+            border-radius: 4px;
+            box-shadow: 0 2px 0 rgba(0, 0, 0, 0.4);
+            vertical-align: middle;
+        }
+
+        /* ─── CAJA DE FÓRMULA MATEMÁTICA ─── */
+        .math-callout {
+            background: var(--surface2);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 14px 20px;
+            margin: 16px 0;
+            text-align: center;
+            font-size: 1.15rem;
+            color: #ffffff;
+        }
+
+        /* ─── CHEAT SHEET DE PREGUNTAS DEL PROFESOR ─── */
+        .qa-card {
+            background: rgba(139, 92, 246, 0.06);
+            border: 1px solid rgba(139, 92, 246, 0.25);
+            border-radius: 12px;
+            padding: 20px;
+            margin-top: 24px;
+        }
+
+        .qa-title {
+            font-family: var(--font-display);
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: #c4b5fd;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .qa-item {
+            margin-bottom: 14px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .qa-item:last-child {
+            margin-bottom: 0;
+            padding-bottom: 0;
+            border-bottom: none;
+        }
+
+        .qa-q {
+            font-size: 0.95rem;
+            font-weight: 600;
+            color: #ffffff;
+            margin-bottom: 4px;
+        }
+
+        .qa-a {
+            font-size: 0.9rem;
+            color: #d1d5db;
+            line-height: 1.6;
+        }
+
+        /* ─── BOTÓN FLOTANTE DE IMPRESIÓN / DESCARGA ─── */
+        .actions-bar {
+            display: flex;
+            justify-content: flex-end;
+            margin-bottom: 20px;
+            gap: 10px;
+        }
+
+        .btn-utility {
+            background: var(--surface2);
+            border: 1px solid var(--border);
+            color: var(--txt1);
+            font-family: var(--font-mono);
+            font-size: 11px;
+            padding: 8px 14px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .btn-utility:hover {
+            background: var(--surface-hover);
+            border-color: var(--border-highlight);
+        }
+
+        /* ─── ESTILOS DE IMPRESIÓN ─── */
+        @media print {
+            body {
+                background: #ffffff !important;
+                color: #111111 !important;
+                padding: 0 !important;
+            }
+            .speaker-nav, .actions-bar, .time-chip {
+                display: none !important;
+            }
+            .speaker-card {
+                background: #ffffff !important;
+                border: 1px solid #e5e7eb !important;
+                box-shadow: none !important;
+                page-break-inside: avoid;
+                margin-bottom: 30px;
+                padding: 20px !important;
+            }
+            .speaker-meta h2, h1, .slide-title-label, .slide-badge {
+                color: #000000 !important;
+            }
+            .speech-text {
+                color: #222222 !important;
+            }
+            .screen-action, .anim-cue, .stage-cue {
+                background: #f3f4f6 !important;
+                border-left-color: #4f46e5 !important;
+                color: #1f2937 !important;
+            }
+            .math-callout {
+                background: #f9fafb !important;
+                border-color: #e5e7eb !important;
+                color: #000000 !important;
+            }
+            .speaker-tip {
+                background: #ecfdf5 !important;
+                color: #065f46 !important;
+                border-color: #10b981 !important;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .speaker-nav {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            .speaker-card {
+                padding: 24px 20px;
+            }
+            h1 {
+                font-size: 1.75rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+
+    <!-- Utility Bar -->
+    <div class="actions-bar">
+        <button class="btn-utility" onclick="window.print()">
+            🖨️ Imprimir / Guardar en PDF
+        </button>
+        <button class="btn-utility" onclick="window.open('vision.html', '_blank')">
+            🚀 Abrir Diapositivas (vision.html)
+        </button>
+    </div>
+
+    <!-- DOCUMENT HEADER -->
+    <header class="doc-header">
+        <div class="header-top">
+            <span class="category-chip">⚡ Guión Oficial de Presentación Sincronizado</span>
+            <span class="time-chip">⏱️ Duración Total: 8 – 10 minutos (~2 - 2.5 min por expositor)</span>
+        </div>
+        <h1>Big O: El Costo Real del Crecimiento</h1>
+        <p class="doc-desc">
+            Guión maestro sincronizado con las 12 diapositivas del sistema interactivo (<code>vision.html</code>). Incluye los parlamentos exactos para cada expositor, fórmulas matemáticas y cajas de acción con <strong>controles de pantalla</strong>, <strong>animaciones interactivas</strong> y <strong>lenguaje corporal sugerido</strong>.
+        </p>
+
+        <!-- Quick Jump Grid -->
+        <nav class="speaker-nav">
+            <a href="#exp1" class="nav-btn nav-e1">
+                <span class="nav-role">Apertura & Escala</span>
+                <span class="nav-name">Expositor 1</span>
+                <span class="nav-role">Slides 00, 01 y 02</span>
+            </a>
+            <a href="#exp2" class="nav-btn nav-e2">
+                <span class="nav-role">Conceptos & Hardware</span>
+                <span class="nav-name">Expositor 2</span>
+                <span class="nav-role">Slides 03 y 04</span>
+            </a>
+            <a href="#exp3" class="nav-btn nav-e3">
+                <span class="nav-role">Reglas & Definición</span>
+                <span class="nav-name">Expositor 3</span>
+                <span class="nav-role">Slides 05, 06 y 07</span>
+            </a>
+            <a href="#exp4" class="nav-btn nav-e4">
+                <span class="nav-role">Geometría & Cierre</span>
+                <span class="nav-name">Expositor 4</span>
+                <span class="nav-role">Slides 08, 09, 10 y 11</span>
+            </a>
+        </nav>
+    </header>
+
+    <!-- ========================================================
+         EXPOSITOR 1: APERTURA, ENFOQUE Y ESCALA (SLIDES 00, 01, 02)
+         ======================================================== -->
+    <section class="speaker-card" id="exp1">
+        <div class="speaker-banner">
+            <div class="speaker-identity">
+                <div class="speaker-avatar avatar-e1">E1</div>
+                <div class="speaker-meta">
+                    <h2>Expositor 1 (Apertura)</h2>
+                    <span>El Desafío de la Escala & El Costo Invisible del Software</span>
+                </div>
+            </div>
+            <div class="speaker-slides-pill">
+                Diapositivas: <strong>00, 01 y 02</strong> · ~2:15 min
+            </div>
+        </div>
+
+        <!-- SLIDE 00: PORTADA -->
+        <div class="slide-block">
+            <div class="slide-tag-row">
+                <span class="slide-badge">Slide 00</span>
+                <span class="slide-title-label">Portada // Big O: El Costo Real del Crecimiento</span>
+            </div>
+            <p class="speech-text">
+                "Buenas tardes, profesor y compañeros. Hoy nuestro equipo les presenta una investigación fundamental en ingeniería de software y ciencias de la computación: <strong>Big O: El Costo Real del Crecimiento</strong>."
+            </p>
+            <p class="speech-text">
+                "Cuando programamos, solemos preocuparnos por si el código compila y da la respuesta correcta en nuestra máquina de desarrollo. Pero hay una pregunta mucho más crítica que define el éxito o el fracaso de cualquier sistema en el mundo real: <em>¿Qué ocurre cuando nuestro software no recibe 10 datos de prueba, sino millones de usuarios concurrentes?</em>"
+            </p>
+
+            <div class="anim-cue">
+                <span class="action-icon">🎬</span>
+                <div class="anim-body">
+                    <strong>Recurso Visual en Pantalla:</strong> Al cargar la portada, las 5 curvas asintóticas vectoriales en el centro ($O(1)$ verde, $O(\log n)$ cian, $O(n)$ violeta, $O(n^2)$ ámbar y $O(2^n)$ roja) se dibujan automáticamente con un trazo láser fluido durante 2.2 segundos. Además, el cursor tiene un halo interactivo y el centro responde con paralaje 3D al movimiento del ratón.
+                </div>
+            </div>
+
+            <div class="stage-cue">
+                <span class="action-icon">🎭</span>
+                <div class="stage-body">
+                    <strong>Puesta en Escena:</strong> Comienza con voz firme y serena. Deja que las curvas terminen de trazarse en pantalla mientras dices el título. Al pronunciar la pregunta de los <em>"millones de usuarios concurrentes"</em>, haz una pausa de 1.5 segundos mirando al profesor y al público.
+                </div>
+            </div>
+
+            <div class="screen-action">
+                <span class="action-icon">👉</span>
+                <div class="action-body">
+                    <strong>Acción en Pantalla:</strong> Presiona <kbd class="kbd-chip">↓</kbd>, <kbd class="kbd-chip">→</kbd> o haz scroll hacia abajo para avanzar a la Diapositiva 01.
+                </div>
+            </div>
+        </div>
+
+        <!-- SLIDE 01: INTRODUCCIÓN AL RENDIMIENTO -->
+        <div class="slide-block">
+            <div class="slide-tag-row">
+                <span class="slide-badge">Slide 01</span>
+                <span class="slide-title-label">01 // Introducción al Rendimiento — El Desafío vs El Enfoque</span>
+            </div>
+            <p class="speech-text">
+                "Como vemos en esta lámina, en ciencias de la computación un algoritmo no solo debe funcionar: <strong>debe ser viable cuando la escala se multiplica por miles o millones</strong>."
+            </p>
+            <p class="speech-text">
+                "En la tarjeta de la izquierda se plantea <strong>El Desafío: ¿Por qué importa Big O?</strong> Cualquier código mal optimizado parece instantáneo cuando lo probamos con 10 registros en nuestra laptop. Pero la notación Big O modela precisamente cómo explota el consumo de tiempo y memoria cuando entran los datos del mundo real, dándonos la clave para <em>escalar sin colapsar la infraestructura</em>."
+            </p>
+            <p class="speech-text">
+                "Y en la tarjeta de la derecha definimos <strong>El Enfoque: la Perspectiva Asintótica</strong>. En lugar de cronometrar microsegundos —que varían según el procesador o la temperatura del chip—, analizamos la tasa pura de crecimiento cuando la entrada $n$ tiende a infinito ($n \to \infty$). Nuestro lema fundamental es este: <strong>medir algoritmos, no procesadores</strong>."
+            </p>
+
+            <div class="anim-cue">
+                <span class="action-icon">🎬</span>
+                <div class="anim-body">
+                    <strong>Efecto en Pantalla:</strong> Al entrar a esta diapositiva, las dos tarjetas (púrpura y verde) entran con una animación suave de desenfoque a nitidez (<em>blur-to-focus</em>) y una elevación vertical escalonada. Las cápsulas inferiores destacan con puntos brillantes.
+                </div>
+            </div>
+
+            <div class="stage-cue">
+                <span class="action-icon">🎭</span>
+                <div class="stage-body">
+                    <strong>Lenguaje Corporal:</strong> Apunta con la mano hacia la tarjeta izquierda al explicar <em>"El Desafío"</em>, y luego hacia la derecha al hablar de la <em>"Perspectiva Asintótica"</em>. Remarca con tono seguro la frase de la cápsula verde: <em>"Medir algoritmos, no procesadores"</em>.
+                </div>
+            </div>
+
+            <div class="screen-action">
+                <span class="action-icon">👉</span>
+                <div class="action-body">
+                    <strong>Acción en Pantalla:</strong> Presiona <kbd class="kbd-chip">↓</kbd> para pasar a la Diapositiva 02 (Demostración Interactiva de Escala).
+                </div>
+            </div>
+        </div>
+
+        <!-- SLIDE 02: EL COSTO INVISIBLE DEL SOFTWARE -->
+        <div class="slide-block">
+            <div class="slide-tag-row">
+                <span class="slide-badge">Slide 02</span>
+                <span class="slide-title-label">02 // Rendimiento & Escala — Demostración Interactiva</span>
+            </div>
+            <p class="speech-text">
+                "Para comprobar el impacto tangible de esto, observemos el experimento que tenemos en pantalla. Hemos puesto a competir dos algoritmos diseñados para resolver exactamente el mismo problema de negocio:"
+            </p>
+            <ul style="margin: 0 0 16px 20px; color: #d1d5db;">
+                <li><strong>Algoritmo A (Lineal):</strong> $T(n) = 5n + 10$</li>
+                <li><strong>Algoritmo B (Cúbico):</strong> $T(n) = 2n^3 + n^2 + 100$</li>
+            </ul>
+            <p class="speech-text">
+                "En el entorno local de desarrollo con apenas $n = 10$ datos, miren los indicadores: ambos están en verde brillante. El Algoritmo A requiere 60 operaciones y el B requiere 2.200. Ambos responden en una fracción microscópica de milisegundo. Todo parece un éxito rotundo."
+            </p>
+
+            <div class="screen-action">
+                <span class="action-icon">⚡</span>
+                <div class="action-body">
+                    <strong>Momento Clave Interactivo:</strong> Presiona la tecla <kbd class="kbd-chip">Espacio</kbd> (o haz clic en el botón <strong>Producción: n = 100.000</strong>). Observa la reacción inmediata en vivo.
+                </div>
+            </div>
+
+            <div class="anim-cue">
+                <span class="action-icon">🎬</span>
+                <div class="anim-body">
+                    <strong>Reacción en Pantalla:</strong> La tarjeta B se torna roja al instante con luz parpadeante, el medidor salta al 100%, aparece de golpe la alerta roja <strong>SERVER CRASH / MEMORY OVERFLOW</strong> con animación de rebote y la gráfica inferior se dispara verticalmente convirtiéndose en un pico rojo (<em>"¡Disparo Cúbico!"</em>).
+                </div>
+            </div>
+
+            <p class="speech-text">
+                "Pero al desplegar a producción con <strong>100.000 usuarios concurrentes</strong>, miren lo que sucede: el Algoritmo A apenas sube a medio millón de operaciones (medio milisegundo de CPU). En cambio, el Algoritmo B salta a <strong>2 billones de operaciones ($2 \times 10^{15}$)</strong>, lo que exige más de <strong>23 días ininterrumpidos de CPU al 100%</strong>, provocando la muerte del servidor por Out Of Memory (OOM Killer)."
+            </p>
+            <p class="speech-text">
+                "Ese es el costo invisible del software. Y para entender matemáticamente por qué no podemos confiar en un simple cronómetro para medir esto, le cedo la palabra al <strong>Expositor 2</strong>."
+            </p>
+
+            <div class="stage-cue">
+                <span class="action-icon">🎭</span>
+                <div class="stage-body">
+                    <strong>Pausa Dramática:</strong> Tras presionar <kbd class="kbd-chip">Espacio</kbd> y ver saltar la alarma roja de choque del servidor, quédate en silencio 2 segundos antes de decir la cifra de los <em>"23 días continuos de CPU"</em>. El contraste visual causará un impacto inmediato.
+                </div>
+            </div>
+
+            <div class="speaker-tip">
+                <span class="tip-label">Clave para la nota</span>
+                Enfatiza que un código ineficiente con bucles anidados parece 'rápido' en pruebas pequeñas, y que solo Big O nos permite predecir el colapso antes de que ocurra en producción.
+            </div>
+        </div>
+    </section>
+
+    <!-- ========================================================
+         EXPOSITOR 2: CONCEPTOS Y PIPELINE DE HARDWARE (SLIDES 03, 04)
+         ======================================================== -->
+    <section class="speaker-card" id="exp2">
+        <div class="speaker-banner">
+            <div class="speaker-identity">
+                <div class="speaker-avatar avatar-e2">E2</div>
+                <div class="speaker-meta">
+                    <h2>Expositor 2</h2>
+                    <span>De la Matemática Clásica a la Función de Costo T(n) & Pipeline de Hardware</span>
+                </div>
+            </div>
+            <div class="speaker-slides-pill">
+                Diapositivas: <strong>03 y 04</strong> · ~2:00 min
+            </div>
+        </div>
+
+        <!-- SLIDE 03: DE LA MATEMÁTICA A LA FUNCIÓN DE COSTO -->
+        <div class="slide-block">
+            <div class="slide-tag-row">
+                <span class="slide-badge">Slide 03</span>
+                <span class="slide-title-label">03 // Conceptos Fundamentales — De la Matemática a la Función de Costo</span>
+            </div>
+            <p class="speech-text">
+                "Muchas gracias. Ante la catástrofe que acaba de demostrar mi compañero, la primera pregunta técnica que surge es: <em>¿Por qué no usamos simplemente la función <code>console.time()</code> o medimos los segundos que tarda la CPU?</em>"
+            </p>
+            <p class="speech-text">
+                "La respuesta está en la distinción conceptual que presentamos en estas dos columnas:"
+            </p>
+            <p class="speech-text">
+                "En la <strong>Matemática Tradicional</strong>, una función $f(x) \colon X \to Y$ tiene como propósito exclusivo transformar datos para hallar una solución numérica final. Por ejemplo, si $f(4) = 4^2 + 1 = 17$, la solución es 17. A la matemática clásica no le interesa cuántos recursos físicos ni cuánta energía consumió la máquina para llegar a ese 17."
+            </p>
+            <p class="speech-text">
+                "En cambio, en la ciencia de la computación creamos la <strong>Función de Costo Computacional $T(n) \colon \mathbb{N} \to \mathbb{R}^+$</strong>. A nosotros no nos preocupa el valor numérico de salida; lo que nos desvela es <strong>cuántas operaciones elementales atómicas</strong> tiene que ejecutar el procesador en función del volumen de datos de entrada $n$."
+            </p>
+
+            <div class="stage-cue">
+                <span class="action-icon">🎭</span>
+                <div class="stage-body">
+                    <strong>Gesto de Manos:</strong> Muestra la palma de una mano al hablar de $f(x)$ diciendo <em>"el valor resultante"</em>, y luego muestra la otra mano al hablar de $T(n)$ diciendo <em>"el costo de pasos para llegar ahí"</em>.
+                </div>
+            </div>
+
+            <div class="speaker-tip">
+                <span class="tip-label">Clave Formal</span>
+                $T(n)$ va de $\mathbb{N}$ a $\mathbb{R}^+$ porque el tamaño de la entrada $n$ (cantidad de elementos en un arreglo) siempre es un entero positivo discreto, mientras que el costo es una cantidad medible real.
+            </div>
+
+            <div class="screen-action">
+                <span class="action-icon">👉</span>
+                <div class="action-body">
+                    <strong>Acción en Pantalla:</strong> Presiona <kbd class="kbd-chip">↓</kbd> para avanzar a la Diapositiva 04 (Simulador de Pipeline de Hardware).
+                </div>
+            </div>
+        </div>
+
+        <!-- SLIDE 04: ESQUEMA DE FLUJO: MEDIR SIN HARDWARE -->
+        <div class="slide-block">
+            <div class="slide-tag-row">
+                <span class="slide-badge">Slide 04</span>
+                <span class="slide-title-label">04 // Independencia del Hardware — Simulador de Pipeline Atómico</span>
+            </div>
+            <p class="speech-text">
+                "Para visualizar cómo se construye $T(n)$ sin depender de ninguna máquina física, observen este <strong>Pipeline de Cómputo Atómico</strong> que tenemos en pantalla:"
+            </p>
+            <ul style="margin: 0 0 16px 20px; color: #d1d5db;">
+                <li><strong>1. Código Fuente:</strong> Instrucciones de alto nivel (asignaciones, bucles <code>for</code>).</li>
+                <li><strong>2. CPU Simulada:</strong> Desglose en ciclos de reloj elementales de una instrucción por ciclo.</li>
+                <li><strong>3. Pasos Elementales:</strong> 1 asignación inicial ($1\text{ op}$) + $n$ comparaciones de bucle ($n+1\text{ ops}$) + cuerpo de bucle ($2n\text{ ops}$).</li>
+                <li><strong>4. Invariante Universal:</strong> La suma algebraica nos da la función de costo cerrada: <strong>$T(n) = 3n + 2$</strong>.</li>
+            </ul>
+
+            <div class="screen-action">
+                <span class="action-icon">⚡</span>
+                <div class="action-body">
+                    <strong>Momento Clave Interactivo:</strong> En la parte superior derecha de la tarjeta, haz clic en el botón <strong>Microcontrolador IoT (100 MHz)</strong> y luego regresa a <strong>Servidor Xeon (5.0 GHz)</strong>.
+                </div>
+            </div>
+
+            <div class="anim-cue">
+                <span class="action-icon">🎬</span>
+                <div class="anim-body">
+                    <strong>Reacción en Pantalla:</strong> Las 4 etapas del pipeline emiten un pulso brillante de borde violeta coordinado. El reloj central pasa de 5.0 GHz a 100 MHz y el tiempo cambia de 0.0008 ms a 0.0400 ms ($50\times$ más lento), pero resalta que la cápsula dorada final $T(n) = 3n + 2$ se mantiene exactamente intacta.
+                </div>
+            </div>
+
+            <p class="speech-text">
+                "Observen la demostración interactiva: un servidor a 5 GHz tarda 50 veces menos tiempo de reloj que un microcontrolador a 100 MHz, <strong>pero ambos ejecutan exactamente las mismas $3n + 2$ operaciones lógicas</strong>."
+            </p>
+            <p class="speech-text">
+                "Por eso Big O no mide milisegundos con un reloj: mide el costo intrínseco del algoritmo. Ahora bien, ¿cómo simplificamos estas funciones de costo polinómicas para quedarnos con su esencia? El <strong>Expositor 3</strong> nos explicará las Reglas de Oro de Big O."
+            </p>
+
+            <div class="stage-cue">
+                <span class="action-icon">🎭</span>
+                <div class="stage-body">
+                    <strong>Frase de Cierre con Énfasis:</strong> Señala la cápsula dorada final de la diapositiva y concluye: <em>"El precio del procesador cambia el tiempo; el diseño del algoritmo define las operaciones"</em>.
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ========================================================
+         EXPOSITOR 3: REGLAS, FADE-OUT Y DEFINICIÓN FORMAL (SLIDES 05, 06, 07)
+         ======================================================== -->
+    <section class="speaker-card" id="exp3">
+        <div class="speaker-banner">
+            <div class="speaker-identity">
+                <div class="speaker-avatar avatar-e3">E3</div>
+                <div class="speaker-meta">
+                    <h2>Expositor 3</h2>
+                    <span>Reglas de Simplificación, Demostración Fade-Out en Vivo & Definición Formal</span>
+                </div>
+            </div>
+            <div class="speaker-slides-pill">
+                Diapositivas: <strong>05, 06 y 07</strong> · ~2:30 min
+            </div>
+        </div>
+
+        <!-- SLIDE 05: REGLAS DE SIMPLIFICACIÓN -->
+        <div class="slide-block">
+            <div class="slide-tag-row">
+                <span class="slide-badge">Slide 05</span>
+                <span class="slide-title-label">05 // Complejidad Asintótica — Las Tres Reglas de Simplificación</span>
+            </div>
+            <p class="speech-text">
+                "Muchas gracias. Calcular polinomios completos como $T(n) = 3n + 2$ o $2n^3 + n^2 + 100$ para sistemas reales con millones de líneas sería engorroso e impráctico. Por eso la notación asintótica aplica un <strong>filtro matemático</strong> sustentado en tres principios:"
+            </p>
+            <ul style="margin: 0 0 16px 20px; color: #d1d5db;">
+                <li><strong>Regla 1: Eliminar Constantes Multiplicativas y Aditivas.</strong> La expresión $5n$ se reduce a $O(n)$. Un factor constante solo estira la gráfica verticalmente, pero no cambia la aceleración intrínseca de la curva al tender a infinito: $c \cdot f(n) \implies O(f(n))$.</li>
+                <li><strong>Regla 2: Conservar el Término Dominante.</strong> En $n^3 + n^2$, al crecer $n$ a gran escala, el término cúbico monopoliza más del 99.9% del tiempo total: $n^3 \gg n^2 \gg n \gg 1$. Los términos menores se vuelven polvo frente al gigante.</li>
+                <li><strong>Regla 3: Suma y Producto de Bloques.</strong> Si dos bloques de código se ejecutan de forma secuencial, sus costos se suman y domina el mayor: $O(A + B) = O(\max(A, B))$. Pero si un bucle está anidado dentro de otro, sus complejidades se multiplican: $O(A \times B)$.</li>
+            </ul>
+
+            <div class="stage-cue">
+                <span class="action-icon">🎭</span>
+                <div class="stage-body">
+                    <strong>Lenguaje Corporal:</strong> Cuenta con los dedos 1, 2 y 3 al enumerar cada regla, haciendo contacto visual con las 3 tarjetas en pantalla.
+                </div>
+            </div>
+
+            <div class="screen-action">
+                <span class="action-icon">👉</span>
+                <div class="action-body">
+                    <strong>Acción en Pantalla:</strong> Presiona <kbd class="kbd-chip">↓</kbd> para entrar a la Diapositiva 06 (Laboratorio de Fade-Out en Vivo).
+                </div>
+            </div>
+        </div>
+
+        <!-- SLIDE 06: DEMOSTRACIÓN DINÁMICA DE DESVANECIMIENTO -->
+        <div class="slide-block">
+            <div class="slide-tag-row">
+                <span class="slide-badge">Slide 06</span>
+                <span class="slide-title-label">06 // Reducción Asintótica en Vivo — Demostración Dinámica: Fade-Out</span>
+            </div>
+            <p class="speech-text">
+                "Veamos este filtro asintótico en acción con la expresión polinómica que tenemos en nuestro laboratorio interactivo:"
+            </p>
+            <div class="math-callout">
+                $$T(n) = 5n^3 + 20n + 1000$$
+            </div>
+
+            <div class="screen-action">
+                <span class="action-icon">⚡</span>
+                <div class="action-body">
+                    <strong>Momento Clave Interactivo:</strong> Haz clic en el botón <strong>'Ejecutar Simplificación'</strong> con icono de play (o haz clic directamente sobre la fórmula en pantalla).
+                </div>
+            </div>
+
+            <div class="anim-cue">
+                <span class="action-icon">🎬</span>
+                <div class="anim-body">
+                    <strong>Secuencia de Animación en Pantalla:</strong>
+                    Las píldoras inferiores de seguimiento se iluminan secuencialmente mientras ocurre la magia:
+                    <ol style="margin-left: 20px; margin-top: 6px;">
+                        <li><strong>Paso 2:</strong> La constante $+1000$ se desenfoca con blur y asciende hasta evaporarse.</li>
+                        <li><strong>Paso 3:</strong> El término lineal $+20n$ sufre el mismo desvanecimiento.</li>
+                        <li><strong>Paso 4:</strong> El coeficiente multiplicador $5$ desaparece.</li>
+                        <li><strong>Paso 5:</strong> La ecuación se limpia por completo y emerge con un rebote elástico una imponente tarjeta resplandeciente: <strong>$O(n^3)$</strong>.</li>
+                    </ol>
+                </div>
+            </div>
+
+            <p class="speech-text">
+                "Al ejecutar la simplificación:"
+            </p>
+            <ul style="margin: 0 0 16px 20px; color: #d1d5db;">
+                <li>El $+1000$ se apaga: para un millón de datos, mil operaciones son imperceptibles.</li>
+                <li>El término lineal $+20n$ se desvanece: para $n = 100.000$, el término cúbico es 10.000 millones de veces más grande.</li>
+                <li>El coeficiente $5$ se absorbe en la notación de orden.</li>
+                <li><strong>Resultado final:</strong> La función queda clasificada en su orden puro de magnitud: <strong>$O(n^3)$ (Complejidad Cúbica)</strong>.</li>
+            </ul>
+
+            <div class="stage-cue">
+                <span class="action-icon">🎭</span>
+                <div class="stage-body">
+                    <strong>Sincronización de Voz:</strong> Narra cada fase al ritmo que los términos van desapareciendo en pantalla. Cuando aparezca el recuadro brillante de $O(n^3)$, abre ambas manos en señal de revelación.
+                </div>
+            </div>
+
+            <div class="screen-action">
+                <span class="action-icon">👉</span>
+                <div class="action-body">
+                    <strong>Acción en Pantalla:</strong> Presiona <kbd class="kbd-chip">↓</kbd> para avanzar a la Diapositiva 07 (Definición Formal).
+                </div>
+            </div>
+        </div>
+
+        <!-- SLIDE 07: DEFINICIÓN FORMAL DE BIG O -->
+        <div class="slide-block">
+            <div class="slide-tag-row">
+                <span class="slide-badge">Slide 07</span>
+                <span class="slide-title-label">07 // Cota Superior Asintótica — La Definición Formal de O(g(n))</span>
+            </div>
+            <p class="speech-text">
+                "Toda esta simplificación intuitiva no es un truco informal; tiene un respaldo matemático riguroso. La informática teórica define formalmente la notación Big O como una <strong>cota superior asintótica</strong> mediante la siguiente proposición:"
+            </p>
+            <div class="math-callout">
+                $$\exists\, c > 0,\; n_0 > 0 \quad : \quad 0 \le f(n) \le c \cdot g(n) \quad \forall n \ge n_0$$
+            </div>
+            <p class="speech-text">
+                "Desglosemos los 5 componentes que vemos en la cuadrícula inferior:"
+            </p>
+            <ul style="margin: 0 0 16px 20px; color: #d1d5db;">
+                <li><strong>$f(n)$</strong>: El costo real del algoritmo que estamos auditando.</li>
+                <li><strong>$g(n)$</strong>: La función modelo de referencia (en nuestro caso, $n^3$).</li>
+                <li><strong>$c > 0$</strong>: Un factor constante de holgura que amplifica a $g(n)$.</li>
+                <li><strong>$n_0 > 0$</strong>: El <strong>umbral crítico de cruce</strong> en el eje de las entradas.</li>
+                <li><strong>$\forall n \ge n_0$</strong>: La garantía absoluta de que a partir de ese umbral, la cota superior <em>jamás vuelve a romperse</em>.</li>
+            </ul>
+            <p class="speech-text">
+                "En términos de ingeniería de software, Big O es una <strong>garantía de techo para el peor escenario</strong>: una vez superado el umbral $n_0$, nuestro consumo de recursos nunca crecerá más rápido que la curva $c \cdot g(n)$."
+            </p>
+            <p class="speech-text">
+                "Ahora, ¿cómo se visualiza esto geométricamente en un plano cartesiano y cómo demostramos que nuestro caso cúbico cumple con esta definición? Le doy la palabra al <strong>Expositor 4</strong>."
+            </p>
+
+            <div class="speaker-tip">
+                <span class="tip-label">Clave para la nota</span>
+                Destaca que los cuantificadores existenciales 'Existe un c' y 'Existe un n₀' significan que basta con encontrar UN SOLO par de testigos válidos en todo el universo de los números reales para que la demostración sea formalmente irrefutable.
+            </div>
+        </div>
+    </section>
+
+    <!-- ========================================================
+         EXPOSITOR 4: GEOMETRÍA, PRUEBA, SUSTITUCIÓN Y CIERRE (SLIDES 08, 09, 10, 11)
+         ======================================================== -->
+    <section class="speaker-card" id="exp4">
+        <div class="speaker-banner">
+            <div class="speaker-identity">
+                <div class="speaker-avatar avatar-e4">E4</div>
+                <div class="speaker-meta">
+                    <h2>Expositor 4</h2>
+                    <span>Geometría Cartesiana Interactiva, Demostración Práctica, Sustitución en Vivo & Cierre</span>
+                </div>
+            </div>
+            <div class="speaker-slides-pill">
+                Diapositivas: <strong>08, 09, 10 y 11</strong> · ~2:45 min
+            </div>
+        </div>
+
+        <!-- SLIDE 08: GEOMETRÍA DE LA COTA SUPERIOR -->
+        <div class="slide-block">
+            <div class="slide-tag-row">
+                <span class="slide-badge">Slide 08</span>
+                <span class="slide-title-label">08 // Visualización Geométrica — Geometría de la Cota Superior</span>
+            </div>
+            <p class="speech-text">
+                "Muchas gracias. Para comprender a fondo la fórmula que acaba de exponer mi compañero, observemos su <strong>geometría directa en el plano cartesiano</strong>."
+            </p>
+
+            <div class="screen-action">
+                <span class="action-icon">🎯</span>
+                <div class="action-body">
+                    <strong>Momento Clave Interactivo:</strong> Mueve el ratón de izquierda a derecha sobre el plano cartesiano. Verás una línea blanca de rastreo interactivo con dos puntos magnéticos siguiendo las curvas.
+                </div>
+            </div>
+
+            <div class="anim-cue">
+                <span class="action-icon">🎬</span>
+                <div class="anim-body">
+                    <strong>Respuesta Dinámica en Pantalla:</strong>
+                    <ul style="margin-left: 20px; margin-top: 4px;">
+                        <li>A la izquierda de $n_0$ ($n < n_0$): la barra de estado inferior se actualiza en tiempo real explicando que la curva verde $T(n)$ puede superar temporalmente a la azul debido a constantes iniciales, y el sombreado se atenúa.</li>
+                        <li>Al cruzar el punto crítico $n_0$ ($n \ge n_0$): el área sombreada se ilumina en violeta brillante y la barra confirma: <strong>¡La condición $0 \le T(n) \le c \cdot g(n)$ se cumple inviolablemente!</strong></li>
+                    </ul>
+                </div>
+            </div>
+
+            <p class="speech-text">
+                "Fíjense en los tres actores de este gráfico:"
+            </p>
+            <ul style="margin: 0 0 16px 20px; color: #d1d5db;">
+                <li>La <strong>curva verde</strong> representa el costo real del algoritmo $T(n)$.</li>
+                <li>La <strong>curva azul</strong> representa la cota superior multiplicada por la constante $c \cdot g(n)$.</li>
+                <li>La <strong>línea punteada violeta</strong> marca el umbral exacto <strong>$n_0$</strong>.</li>
+            </ul>
+            <p class="speech-text">
+                "Antes de $n_0$, para números pequeños, las constantes fijas distorsionan la gráfica. Pero en el punto exacto de cruce $n_0$, la curva azul supera a la verde y entramos en la <strong>Zona Inviolable sombreada</strong>. A partir de allí, la cota azul jamás vuelve a romperse."
+            </p>
+
+            <div class="stage-cue">
+                <span class="action-icon">🎭</span>
+                <div class="stage-body">
+                    <strong>Puesta en Escena:</strong> Mientras hablas, coloca el cursor primero a la izquierda de $n_0$ y luego muévelo decididamente hacia la derecha, dejando que la audiencia lea la confirmación en la barra de estado inferior.
+                </div>
+            </div>
+
+            <div class="screen-action">
+                <span class="action-icon">👉</span>
+                <div class="action-body">
+                    <strong>Acción en Pantalla:</strong> Presiona <kbd class="kbd-chip">↓</kbd> para ir a la Diapositiva 09 (Demostración Práctica).
+                </div>
+            </div>
+        </div>
+
+        <!-- SLIDE 09: DEMOSTRACIÓN PRÁCTICA DEL CASO CÚBICO -->
+        <div class="slide-block">
+            <div class="slide-tag-row">
+                <span class="slide-badge">Slide 09</span>
+                <span class="slide-title-label">09 // Caso de Estudio — Demostración Práctica: El Caso Cúbico</span>
+            </div>
+            <p class="speech-text">
+                "Ahora llevaremos toda esta teoría a la demostración matemática formal de nuestro caso de estudio:"
+            </p>
+            <div class="math-callout">
+                $$T(n) = 2n^3 + n^2 + 100 \stackrel{?}{\in} O(n^3)$$
+            </div>
+            <p class="speech-text">
+                "Como vemos en las tres tarjetas de la lámina, el proceso se divide en 3 pasos lógicos:"
+            </p>
+            <ul style="margin: 0 0 16px 20px; color: #d1d5db;">
+                <li><strong>Paso 1 (Filtro Dominante):</strong> Identificamos que $2n^3 \gg n^2 \gg 100$. Por ende, conjeturamos que la función modelo es cúbica: <strong>$g(n) = n^3$</strong>.</li>
+                <li><strong>Paso 2 (Condición Formal):</strong> Planteamos la inecuación que debemos satisfacer:
+                    $$2n^3 + n^2 + 100 \le c \cdot n^3 \quad \forall n \ge n_0$$
+                </li>
+                <li><strong>Paso 3 (Selección de Testigos por Acotación):</strong> Si fijamos como umbral que $n \ge 10$, podemos acotar los términos menores usando potencias cúbicas:
+                    <ul style="margin-left: 20px; margin-top: 6px;">
+                        <li>Como $n \ge 10$, entonces $n^2 \le \frac{1}{10}n^3 = 0.1n^3$.</li>
+                        <li>Como $n \ge 10$, entonces $100 \le \frac{100}{1000}n^3 = 0.1n^3$.</li>
+                        <li>Sumando: $2n^3 + 0.1n^3 + 0.1n^3 = \mathbf{2.2n^3}$.</li>
+                    </ul>
+                    Si elegimos la constante entera $c = 3$, se cumple que $2.2n^3 \le 3n^3$. ¡Hemos encontrado los dos testigos matemáticos irrefutables: <strong>$c = 3$ y $n_0 = 10$</strong>! $\blacksquare$
+                </li>
+            </ul>
+
+            <div class="stage-cue">
+                <span class="action-icon">🎭</span>
+                <div class="stage-body">
+                    <strong>Lenguaje Corporal:</strong> Señala el Paso 3 con decisión. Resalta con voz firme que la elección de $c=3$ y $n_0=10$ no es una adivinanza, sino una consecuencia lógica de acotar términos.
+                </div>
+            </div>
+
+            <div class="speaker-tip">
+                <span class="tip-label">Clave para la nota</span>
+                El método de acotación de términos menores por fracciones de $n^3$ es el estándar riguroso en libros como el Cormen (CLRS) y demuestra madurez matemática ante el jurado.
+            </div>
+
+            <div class="screen-action">
+                <span class="action-icon">👉</span>
+                <div class="action-body">
+                    <strong>Acción en Pantalla:</strong> Presiona <kbd class="kbd-chip">↓</kbd> para ir a la Diapositiva 10 (Validación Numérica en Vivo).
+                </div>
+            </div>
+        </div>
+
+        <!-- SLIDE 10: SUSTITUCIÓN NUMÉRICA EN VIVO -->
+        <div class="slide-block">
+            <div class="slide-tag-row">
+                <span class="slide-badge">Slide 10</span>
+                <span class="slide-title-label">10 // Comprobación Numérica en Vivo — Sustitución Numérica en Vivo</span>
+            </div>
+            <p class="speech-text">
+                "Para disipar cualquier duda, en este laboratorio interactivo sustituimos valores reales en la inecuación con nuestros testigos fijos $c = 3$ y $n_0 = 10$:"
+            </p>
+            <p class="speech-text">
+                "<strong>Caso 1: En el punto exacto del umbral ($n = 10$):</strong>"
+            </p>
+            <ul style="margin: 0 0 14px 20px; color: #d1d5db;">
+                <li>$T(10) = 2(10)^3 + (10)^2 + 100 = \mathbf{2.200\text{ operaciones}}$</li>
+                <li>Cota superior $c \cdot g(10) = 3 \cdot (10)^3 = \mathbf{3.000\text{ operaciones}}$</li>
+                <li>¿Se cumple la inecuación? $\mathbf{2.200 \le 3.000} \implies$ <strong>VERDADERO</strong> con una holgura a favor de <strong>800 operaciones</strong>.</li>
+            </ul>
+
+            <div class="screen-action">
+                <span class="action-icon">⚡</span>
+                <div class="action-body">
+                    <strong>Momento Clave Interactivo:</strong> Haz clic en el botón <strong>n = 100</strong> en la parte superior derecha de la tarjeta.
+                </div>
+            </div>
+
+            <div class="anim-cue">
+                <span class="action-icon">🎬</span>
+                <div class="anim-body">
+                    <strong>Reacción en Pantalla:</strong> Ambos lados de la inecuación se recalculan instantáneamente con una animación de escala; la insignia verde <strong>✓ Cota Superior Válida</strong> titila con rebote elástico y el pie de página actualiza la holgura a casi un millón de operaciones.
+                </div>
+            </div>
+
+            <p class="speech-text">
+                "Y observen lo que ocurre al pulsar <strong>$n = 100$</strong>: el costo real es de 2.010.100 operaciones frente a una cota de 3.000.000. La holgura a favor de la cota superior se expande a casi un millón de operaciones de seguridad."
+            </p>
+            <p class="speech-text">
+                "Esto demuestra en vivo que a medida que $n$ crece, la cota no solo se sostiene, sino que se consolida con holgura infinita. Queda formal y numéricamente demostrado que $T(n) \in O(n^3)$."
+            </p>
+
+            <div class="stage-cue">
+                <span class="action-icon">🎭</span>
+                <div class="stage-body">
+                    <strong>Puesta en Escena:</strong> Tras hacer clic en $n=100$, mira al profesor y di: <em>"La brecha de seguridad se multiplicó por más de mil veces; la cota es indestructible"</em>.
+                </div>
+            </div>
+
+            <div class="screen-action">
+                <span class="action-icon">👉</span>
+                <div class="action-body">
+                    <strong>Acción en Pantalla:</strong> Presiona <kbd class="kbd-chip">↓</kbd> para la Diapositiva final 11 (Cierre & Preguntas).
+                </div>
+            </div>
+        </div>
+
+        <!-- SLIDE 11: CONCLUSIÓN Y PREGUNTAS -->
+        <div class="slide-block">
+            <div class="slide-tag-row">
+                <span class="slide-badge">Slide 11</span>
+                <span class="slide-title-label">11 // Cierre & Preguntas — ¡Muchas Gracias!</span>
+            </div>
+            <p class="speech-text">
+                "Para concluir nuestra presentación:"
+            </p>
+            <p class="speech-text">
+                "La notación Big O no es un simple ejercicio algebraico de pizarrón. Es la disciplina de ingeniería que separa a un sistema aficionado que colapsa catastróficamente con 100.000 usuarios, de una arquitectura de software robusta, predecible y capaz de sostener infraestructuras globales."
+            </p>
+            <p class="speech-text">
+                "Como vemos en el reactor orbital en pantalla, desde el algoritmo constante $O(1)$ hasta el prohibitivo factorial $O(n!)$, <strong>comprender el orden de crecimiento es la mayor responsabilidad de un ingeniero de software</strong>."
+            </p>
+            <p class="speech-text">
+                "¡Muchas gracias por su atención! Abrimos formalmente el espacio para responder cualquier pregunta del profesor y de nuestros compañeros."
+            </p>
+
+            <div class="anim-cue">
+                <span class="action-icon">🎬</span>
+                <div class="anim-body">
+                    <strong>Reactor Central en Pantalla:</strong> El núcleo Big O gira con sus 3 anillos orbitales y 7 satélites representando toda la jerarquía de complejidades ($O(1), O(\log n), O(n), O(n \log n), O(n^2), O(2^n), O(n!)$). Mueve suavemente el ratón para activar la perspectiva 3D del reactor.
+                </div>
+            </div>
+
+            <div class="stage-cue">
+                <span class="action-icon">🎭</span>
+                <div class="stage-body">
+                    <strong>Postura de Equipo:</strong> Todo el equipo da un paso al frente o se pone de pie alineado. Mantengan contacto visual sereno, sonrían y adopten una postura receptiva con las manos abiertas.
+                </div>
+            </div>
+
+            <!-- Cheat Sheet de Respuestas Maestras para Preguntas del Profesor -->
+            <div class="qa-card">
+                <div class="qa-title">
+                    <span>🛡️ Cheat Sheet: Respuestas Maestras para Preguntas del Profesor</span>
+                </div>
+                <div class="qa-item">
+                    <div class="qa-q">P1: ¿Por qué eligieron c = 3 y n₀ = 10? ¿Son los únicos valores posibles?</div>
+                    <div class="qa-a"><strong>Respuesta:</strong> <em>"No, profesor. Por definición formal, los testigos no son únicos. Existen infinitos pares válidos. Por ejemplo, si hubiésemos elegido $n_0 = 1$, habríamos necesitado una constante $c \ge 103$. Elegir $n_0 = 10$ y $c = 3$ es la solución más elegante porque mantiene las constantes pequeñas y manejables."</em></div>
+                </div>
+                <div class="qa-item">
+                    <div class="qa-q">P2: Si la función es O(n³), ¿es también O(n⁴)?</div>
+                    <div class="qa-a"><strong>Respuesta:</strong> <em>"Matemáticamente sí, porque Big O es solo una cota superior ($T(n) \le c \cdot n^4$). Sin embargo, en ingeniería siempre buscamos la cota superior asintótica más ajustada (tight bound). Por eso decimos que pertenece a $\Theta(n^3)$ y que su cota mínima superior es $O(n^3)$."</em></div>
+                </div>
+                <div class="qa-item">
+                    <div class="qa-q">P3: ¿Por qué no solucionar el Algoritmo B comprando más servidores en AWS o Google Cloud?</div>
+                    <div class="qa-a"><strong>Respuesta:</strong> <em>"Porque la complejidad cúbica crece a una tasa que ningún hardware del planeta puede amortiguar. Duplicar la capacidad del servidor solo nos permite aumentar la entrada en apenas un factor de $\sqrt[3]{2} \approx 1.25$ ($25\%$). La solución ante un problema de crecimiento asintótico es rediseñar el algoritmo, no gastar en hardware."</em></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+</div>
+
+</body>
+</html>

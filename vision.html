@@ -1,0 +1,899 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Big O: El Costo Real del Crecimiento</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Mono:ital,wght@0,300;0,400;0,500;1,300;1,400;1,500&family=Host+Grotesk:ital,wght@0,300..800;1,300..800&display=swap" rel="stylesheet">
+    <!-- KaTeX for razor-sharp mathematical typography -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
+    <link rel="stylesheet" href="vision.css">
+</head>
+<body>
+    <!-- Custom Cursor -->
+    <div id="cursor-dot" class="cursor"></div>
+    <div id="cursor-ring" class="cursor"></div>
+
+    <!-- Top Branding Pill -->
+    <div class="deck-brand-pill">
+        <span class="brand-dot"></span>
+        <span class="brand-text">BIG O // ANÁLISIS DE COMPLEJIDAD</span>
+    </div>
+
+    <!-- Bottom Left HUD: Guión & Speaker Indicator -->
+    <div class="deck-bottom-left">
+        <a href="guion.html" target="_blank" class="deck-guion-btn" title="Abrir Guión Oficial de la Exposición (Nueva pestaña)" id="btn-open-guion">
+            <svg class="book-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
+                <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
+                <line x1="9" y1="7" x2="16" y2="7"></line>
+                <line x1="9" y1="11" x2="14" y2="11"></line>
+            </svg>
+            <span class="guion-btn-text">Guión</span>
+        </a>
+        <div class="deck-speaker" id="deck-speaker">
+            <span class="speaker-dot"></span>
+            <span class="speaker-name" id="speaker-name">Expositor 1</span>
+        </div>
+    </div>
+
+    <!-- PRESENTATION DECK (12 SLIDES) -->
+    <div id="deck">
+
+        <!-- ==========================================
+             SLIDE 0: PORTADA / PRESENTACIÓN DEL EQUIPO
+             ========================================== -->
+        <div class="slide slide-cover" data-i="0">
+            <div class="bgw">BIG O</div>
+            <div class="slide-eyebrow e">COMPLEJIDAD ALGORÍTMICA // PRESENTACIÓN</div>
+            <div class="inner cover-inner">
+                <div class="cover-header e">
+                    <div class="cover-badge">
+                        <span class="pulse-dot"></span> CIENCIAS DE LA COMPUTACIÓN &amp; ALGORITMOS
+                    </div>
+                    <h1 class="cover-title">Big O: El Costo Real del <span class="a-line">Crecimiento</span></h1>
+                    <p class="cover-lead">Un análisis riguroso sobre la escalabilidad del software, el comportamiento asintótico y los límites computacionales independientes del hardware.</p>
+                </div>
+
+                <!-- Big O Hero Animation Centerpiece -->
+                <div class="cover-big-o-hero e" id="cover-big-o-hero">
+                    <!-- Ambient Glow Backdrop -->
+                    <div class="cover-glow-backdrop"></div>
+
+                    <!-- Holographic Vector Asymptotic Curves -->
+                    <div class="cover-curves-stage">
+                        <svg viewBox="0 0 760 250" class="cover-curves-svg" preserveAspectRatio="xMidYMid meet">
+                            <defs>
+                                <linearGradient id="curveO1Grad" x1="0%" y1="0%" x2="100%" y2="0%">
+                                    <stop offset="0%" stop-color="#10b981" stop-opacity="0.2"/>
+                                    <stop offset="100%" stop-color="#10b981" stop-opacity="0.95"/>
+                                </linearGradient>
+                                <linearGradient id="curveOLogGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+                                    <stop offset="0%" stop-color="#06b6d4" stop-opacity="0.2"/>
+                                    <stop offset="100%" stop-color="#06b6d4" stop-opacity="0.95"/>
+                                </linearGradient>
+                                <linearGradient id="curveONGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+                                    <stop offset="0%" stop-color="#5e6ad2" stop-opacity="0.2"/>
+                                    <stop offset="100%" stop-color="#7170ff" stop-opacity="0.95"/>
+                                </linearGradient>
+                                <linearGradient id="curveON2Grad" x1="0%" y1="0%" x2="100%" y2="0%">
+                                    <stop offset="0%" stop-color="#f59e0b" stop-opacity="0.2"/>
+                                    <stop offset="100%" stop-color="#f59e0b" stop-opacity="0.95"/>
+                                </linearGradient>
+                                <linearGradient id="curveOExpGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+                                    <stop offset="0%" stop-color="#ef4444" stop-opacity="0.2"/>
+                                    <stop offset="100%" stop-color="#ef4444" stop-opacity="1"/>
+                                </linearGradient>
+                                <filter id="coverGlow" x="-20%" y="-20%" width="140%" height="140%">
+                                    <feGaussianBlur stdDeviation="1" result="blur"/>
+                                    <feMerge>
+                                        <feMergeNode in="blur"/>
+                                        <feMergeNode in="SourceGraphic"/>
+                                    </feMerge>
+                                </filter>
+                            </defs>
+
+                            <!-- Background Grid -->
+                            <g stroke="rgba(255,255,255,0.04)" stroke-dasharray="3,3">
+                                <line x1="80" y1="50" x2="700" y2="50"/>
+                                <line x1="80" y1="110" x2="700" y2="110"/>
+                                <line x1="80" y1="170" x2="700" y2="170"/>
+                                <line x1="235" y1="30" x2="235" y2="225"/>
+                                <line x1="390" y1="30" x2="390" y2="225"/>
+                                <line x1="545" y1="30" x2="545" y2="225"/>
+                            </g>
+
+                            <!-- Axes -->
+                            <g stroke="rgba(255,255,255,0.18)" stroke-width="1.2">
+                                <line x1="80" y1="225" x2="710" y2="225"/>
+                                <line x1="80" y1="225" x2="80" y2="20"/>
+                            </g>
+
+                            <!-- Axis Labels -->
+                            <text x="705" y="242" fill="#62666d" font-size="11" font-family="'DM Mono', monospace">Tamaño Entrada (n) →</text>
+                            <text x="25" y="22" fill="#62666d" font-size="11" font-family="'DM Mono', monospace">Tiempo ↑</text>
+
+                            <!-- Animated Asymptotic Curves (Fine, razor-sharp vector lines) -->
+                            <!-- O(1) -->
+                            <path class="hero-path path-o1" d="M 80,210 L 690,210" stroke="url(#curveO1Grad)" stroke-width="1.1" fill="none"/>
+                            <text x="696" y="214" fill="#10b981" font-size="11" font-weight="600" font-family="'DM Mono', monospace">O(1)</text>
+
+                            <!-- O(log n) -->
+                            <path class="hero-path path-olog" d="M 80,222 C 180,205 380,182 690,170" stroke="url(#curveOLogGrad)" stroke-width="1.1" fill="none"/>
+                            <text x="696" y="174" fill="#06b6d4" font-size="11" font-weight="600" font-family="'DM Mono', monospace">O(log n)</text>
+
+                            <!-- O(n) -->
+                            <path class="hero-path path-on" d="M 80,224 L 690,105" stroke="url(#curveONGrad)" stroke-width="1.1" fill="none"/>
+                            <text x="696" y="109" fill="#7170ff" font-size="11" font-weight="600" font-family="'DM Mono', monospace">O(n)</text>
+
+                            <!-- O(n^2) -->
+                            <path class="hero-path path-on2" d="M 80,225 C 280,220 480,175 625,35" stroke="url(#curveON2Grad)" stroke-width="1.1" fill="none"/>
+                            <text x="632" y="38" fill="#f59e0b" font-size="11" font-weight="600" font-family="'DM Mono', monospace">O(n²)</text>
+
+                            <!-- O(2^n) -->
+                            <path class="hero-path path-oexp" d="M 80,225 C 200,225 315,200 365,22" stroke="url(#curveOExpGrad)" stroke-width="1.2" fill="none"/>
+                            <text x="372" y="25" fill="#ef4444" font-size="11" font-weight="600" font-family="'DM Mono', monospace">O(2ⁿ)</text>
+                        </svg>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==========================================
+             SLIDE 1: INTRODUCCIÓN A BIG O
+             ========================================== -->
+        <div class="slide" data-i="1">
+            <div class="bgw">BIG O</div>
+            <div class="slide-eyebrow e">01 // INTRODUCCIÓN AL RENDIMIENTO</div>
+            <div class="inner">
+                <h2 class="e">El Costo Real del <span class="a-line">Crecimiento</span></h2>
+                <p class="lead e">En ciencias de la computación, un algoritmo no solo debe funcionar: debe ser viable cuando la escala se multiplica por miles o millones.</p>
+
+                <div class="g2">
+                    <div class="card intro-card e">
+                        <div class="pill-badge-purple pill-purple">El Desafío</div>
+                        <h3 class="mono-title">¿Por qué importa Big O?</h3>
+                        <p class="intro-text">Cualquier código mal optimizado parece rápido con 10 datos de prueba en la máquina local. La notación Big O modela cómo explota el consumo de tiempo y memoria cuando entran en juego los datos del mundo real.</p>
+                        <div class="intro-metric-pill">
+                            <span class="bullet-dot"></span> Escalar sin colapsar la infraestructura
+                        </div>
+                        <div class="deco-num">01</div>
+                    </div>
+
+                    <div class="card intro-card e">
+                        <div class="pill-badge-green pill-green">El Enfoque</div>
+                        <h3 class="mono-title">Perspectiva Asintótica</h3>
+                        <p class="intro-text">En lugar de cronometrar microsegundos dependientes del silicio, analizamos la tasa pura de crecimiento cuando la entrada $n$ tiende a infinito ($n \to \infty$), revelando el verdadero orden de magnitud del costo computacional.</p>
+                        <div class="intro-metric-pill">
+                            <span class="bullet-dot chk-green"></span> Medir algoritmos, no procesadores
+                        </div>
+                        <div class="deco-num">02</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==========================================
+             SLIDE 2: EL COSTO INVISIBLE DEL SOFTWARE
+             ========================================== -->
+        <div class="slide" data-i="2">
+            <div class="bgw">SCALE</div>
+            <div class="slide-eyebrow e">02 // RENDIMIENTO &amp; ESCALA</div>
+            <div class="inner">
+                <h2 class="e">El Costo Invisible del <span class="a-line">Software</span></h2>
+                <p class="lead e">Dos algoritmos resuelven la misma tarea. Con $n = 10$, ambos brillan en verde. Al escalar a producción, la complejidad cúbica destruye el servidor.</p>
+
+                <!-- Interactive Scale Controller -->
+                <div class="scale-ctrl e">
+                    <div class="scale-label-box">
+                        <span class="ctrl-tag">ENTRADA INTERACTIVA:</span>
+                        <span class="ctrl-sub">Prueba el impacto de $n$ en tiempo real</span>
+                    </div>
+                    <div class="scale-buttons">
+                        <button class="scale-btn active" id="btn-scale-10" onclick="setScale(10)">
+                            <span class="badge-mini">Local</span> $n = 10$
+                        </button>
+                        <button class="scale-btn" id="btn-scale-100k" onclick="setScale(100000)">
+                            <span class="badge-mini">Producción</span> $n = 100.000$
+                        </button>
+                    </div>
+                    <div class="scale-hint-kbd">
+                        Presiona <kbd class="kbd-key">Espacio</kbd> o haz clic para alternar
+                    </div>
+                </div>
+
+                <!-- Two Comparative Cards with Live Growth Display -->
+                <div class="g2">
+                    <!-- Algoritmo A -->
+                    <div class="card algo-card algo-a e" id="card-algo-a">
+                        <div class="card-header-flex">
+                            <div class="pill-badge-green pill-green">Algoritmo A · O(n)</div>
+                            <div class="status-indicator status-green" id="status-a">
+                                <span class="pulse-dot"></span> <span class="status-text">Estable</span>
+                            </div>
+                        </div>
+                        <h3 class="mono-formula">$T(n) = 5n + 10$</h3>
+                        <p class="algo-desc">Crecimiento estrictamente lineal. Costo predecible y proporcional al volumen.</p>
+
+                        <div class="metrics-box">
+                            <div class="metric-row">
+                                <span class="m-label">Operaciones:</span>
+                                <span class="m-val mono" id="ops-a">60 ops</span>
+                            </div>
+                            <div class="metric-row">
+                                <span class="m-label">Tiempo (1 GHz):</span>
+                                <span class="m-val mono" id="time-a">~ 0.00006 ms</span>
+                            </div>
+                            <div class="metric-meter">
+                                <div class="meter-fill meter-green" id="meter-a" style="width: 2%;"></div>
+                            </div>
+                        </div>
+
+                        <!-- Growth Curve Mini Graph for Algo A -->
+                        <div class="curve-visual-box">
+                            <div class="curve-header-flex">
+                                <span class="curve-title">Curva de Crecimiento: Lineal Suave</span>
+                                <span class="curve-val-tag tag-green">Pendiente Constante</span>
+                            </div>
+                            <div class="curve-svg-wrap">
+                                <svg viewBox="0 0 380 44" class="curve-mini-svg" preserveAspectRatio="none">
+                                    <defs>
+                                        <linearGradient id="gradCurveA" x1="0%" y1="0%" x2="0%" y2="100%">
+                                            <stop offset="0%" stop-color="#10b981" stop-opacity="0.3"/>
+                                            <stop offset="100%" stop-color="#10b981" stop-opacity="0.0"/>
+                                        </linearGradient>
+                                    </defs>
+                                    <line x1="8" y1="40" x2="372" y2="40" stroke="rgba(255,255,255,0.06)" stroke-width="1"/>
+                                    <path d="M 8,38 L 372,12 L 372,40 L 8,40 Z" fill="url(#gradCurveA)"/>
+                                    <path d="M 8,38 L 372,12" stroke="#10b981" stroke-width="1.8" fill="none" stroke-linecap="round"/>
+                                    <circle cx="372" cy="12" r="3" fill="#10b981"/>
+                                </svg>
+                            </div>
+                        </div>
+                        <div class="deco-num">O(n)</div>
+                    </div>
+
+                    <!-- Algoritmo B -->
+                    <div class="card algo-card algo-b e" id="card-algo-b">
+                        <div class="card-header-flex">
+                            <div class="pill-badge-green pill-green" id="badge-b">Algoritmo B · O(n³)</div>
+                            <div class="status-indicator status-green" id="status-b">
+                                <span class="pulse-dot"></span> <span class="status-text" id="status-text-b">Estable</span>
+                            </div>
+                        </div>
+                        <h3 class="mono-formula" id="formula-b">$T(n) = 2n^3 + n^2 + 100$</h3>
+                        <p class="algo-desc">Crecimiento cúbico. Bucles anidados producen una explosión combinatoria inviable.</p>
+
+                        <div class="metrics-box">
+                            <div class="metric-row">
+                                <span class="m-label">Operaciones:</span>
+                                <span class="m-val mono" id="ops-b">2.200 ops</span>
+                            </div>
+                            <div class="metric-row">
+                                <span class="m-label">Tiempo (1 GHz):</span>
+                                <span class="m-val mono" id="time-b">~ 0.0022 ms</span>
+                            </div>
+                            <div class="metric-meter">
+                                <div class="meter-fill meter-green" id="meter-b" style="width: 4%;"></div>
+                            </div>
+                        </div>
+
+                        <!-- Crash Notification Banner -->
+                        <div class="crash-alert-banner" id="crash-banner">
+                            <div class="alert-icon">⚠️</div>
+                            <div class="alert-content">
+                                <strong class="alert-title">SERVER CRASH / MEMORY OVERFLOW</strong>
+                                <span class="alert-sub">Tiempo de CPU estimado: ~23 DÍAS continuos. OOM Killer activo.</span>
+                            </div>
+                        </div>
+
+                        <!-- Growth Curve Mini Graph for Algo B -->
+                        <div class="curve-visual-box" id="curve-box-b">
+                            <div class="curve-header-flex">
+                                <span class="curve-title" id="curve-title-b">Curva de Crecimiento: Estable en n = 10</span>
+                                <span class="curve-val-tag tag-green" id="curve-tag-b">Zona Segura</span>
+                            </div>
+                            <div class="curve-svg-wrap">
+                                <svg viewBox="0 0 380 44" class="curve-mini-svg" preserveAspectRatio="none" id="curve-svg-b">
+                                    <defs>
+                                        <linearGradient id="gradCurveBGreen" x1="0%" y1="0%" x2="0%" y2="100%">
+                                            <stop offset="0%" stop-color="#10b981" stop-opacity="0.3"/>
+                                            <stop offset="100%" stop-color="#10b981" stop-opacity="0.0"/>
+                                        </linearGradient>
+                                        <linearGradient id="gradCurveBRed" x1="0%" y1="0%" x2="0%" y2="100%">
+                                            <stop offset="0%" stop-color="#ef4444" stop-opacity="0.4"/>
+                                            <stop offset="100%" stop-color="#ef4444" stop-opacity="0.0"/>
+                                        </linearGradient>
+                                    </defs>
+                                    <line x1="8" y1="40" x2="372" y2="40" stroke="rgba(255,255,255,0.06)" stroke-width="1"/>
+                                    <path id="curve-area-b" d="M 8,39 C 140,39 260,37 372,35 L 372,40 L 8,40 Z" fill="url(#gradCurveBGreen)"/>
+                                    <path id="curve-path-b" d="M 8,39 C 140,39 260,37 372,35" stroke="#10b981" stroke-width="1.8" fill="none" stroke-linecap="round"/>
+                                    <circle id="curve-dot-b" cx="372" cy="35" r="3" fill="#10b981"/>
+                                </svg>
+                            </div>
+                        </div>
+                        <div class="deco-num">O(n³)</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==========================================
+             SLIDE 3: DE LA MATEMÁTICA A LA FUNCIÓN DE COSTO
+             ========================================== -->
+        <div class="slide" data-i="3">
+            <div class="bgw">COST</div>
+            <div class="slide-eyebrow e">03 // CONCEPTOS FUNDAMENTALES</div>
+            <div class="inner">
+                <h2 class="e">De la Matemática a la <span class="a-line">Función de Costo</span></h2>
+                <p class="lead e">Medir el rendimiento con un cronómetro está sesgado por el hardware, el compilador y la temperatura. $T(n)$ mide operaciones elementales universales.</p>
+
+                <!-- Two Contrast Columns -->
+                <div class="g2">
+                    <div class="card compare-tall-card e">
+                        <div class="pill-badge-purple pill-purple">Matemática Tradicional</div>
+                        <h3 class="mono-title-lg">$f(x) \colon X \longrightarrow Y$</h3>
+                        <p class="compare-lead">Transforma datos. Su propósito exclusivo es obtener un valor numérico resultante a partir de una variable de entrada.</p>
+                        <div class="card-checklist-lg">
+                            <div class="check-item-lg"><span class="chk-bullet">●</span> <strong>Pregunta central:</strong> ¿Cuál es el resultado matemático del cálculo?</div>
+                            <div class="check-item-lg"><span class="chk-bullet">●</span> <strong>Relación:</strong> Entrada $\to$ Salida de datos.</div>
+                            <div class="check-item-lg"><span class="chk-bullet">●</span> <strong>Ejemplo:</strong> $f(4) = 4^2 + 1 = 17$. El valor $17$ es la solución buscada.</div>
+                            <div class="check-item-lg"><span class="chk-bullet">●</span> <strong>Indiferencia de costo:</strong> Ignora cuántos recursos físicos consumió la máquina.</div>
+                        </div>
+                        <div class="deco-num">f(x)</div>
+                    </div>
+
+                    <div class="card compare-tall-card e">
+                        <div class="pill-badge-green pill-green">Función de Costo Computacional</div>
+                        <h3 class="mono-title-lg">$T(n) \colon \mathbb{N} \longrightarrow \mathbb{R}^+$</h3>
+                        <p class="compare-lead">Mide el consumo de recursos. Asocia el tamaño de los datos ($n$) con la cantidad de pasos elementales que la CPU debe ejecutar.</p>
+                        <div class="card-checklist-lg">
+                            <div class="check-item-lg"><span class="chk-bullet chk-green">●</span> <strong>Pregunta central:</strong> ¿Cuántas operaciones elementales exige ejecutar este algoritmo?</div>
+                            <div class="check-item-lg"><span class="chk-bullet chk-green">●</span> <strong>Relación:</strong> Tamaño ($n$) $\to$ Tiempo / Memoria / Operaciones básicas.</div>
+                            <div class="check-item-lg"><span class="chk-bullet chk-green">●</span> <strong>Independencia:</strong> Cuenta pasos atómicos antes de que toquen el silicio.</div>
+                            <div class="check-item-lg"><span class="chk-bullet chk-green">●</span> <strong>Universalidad:</strong> Válida tanto en una supercomputadora como en un microcontrolador.</div>
+                        </div>
+                        <div class="deco-num">T(n)</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==========================================
+             SLIDE 4: ESQUEMA DE FLUJO: MEDIR SIN HARDWARE
+             ========================================== -->
+        <div class="slide" data-i="4">
+            <div class="bgw">FLOW</div>
+            <div class="slide-eyebrow e">04 // INDEPENDENCIA DEL HARDWARE</div>
+            <div class="inner">
+                <h2 class="e">Esquema de Flujo: <span class="a-line">Medir sin Hardware</span></h2>
+                <p class="lead e">El código se desglosa en ciclos de reloj elementales. El tiempo medido en segundos cambia según la máquina, pero $T(n)$ se mantiene invariante.</p>
+
+                <!-- Full Width Animated CPU Pipeline -->
+                <div class="cpu-pipeline-card pipeline-expanded e">
+                    <div class="pipeline-header">
+                        <div class="pipeline-tag">SIMULADOR DE CÓMPUTO ATÓMICO</div>
+                        <div class="pipeline-hw-toggle">
+                            <span class="hw-label">Procesador de Prueba:</span>
+                            <button class="hw-btn active" id="hw-fast" onclick="setCpuHw('fast')">Servidor Xeon (5.0 GHz)</button>
+                            <button class="hw-btn" id="hw-slow" onclick="setCpuHw('slow')">Microcontrolador IoT (100 MHz)</button>
+                        </div>
+                    </div>
+
+                    <div class="pipeline-diagram">
+                        <!-- Step 1: Code -->
+                        <div class="pipeline-node node-large">
+                            <div class="node-icon">
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+                            </div>
+                            <div class="node-label">Código Fuente</div>
+                            <div class="node-sub">Instrucciones de alto nivel</div>
+                            <div class="node-code-preview mono">sum = 0; for x in arr...</div>
+                        </div>
+
+                        <div class="pipe-arrow">
+                            <span class="arrow-line"></span>
+                            <span class="pulse-particle"></span>
+                        </div>
+
+                        <!-- Step 2: CPU Sim -->
+                        <div class="pipeline-node node-large node-cpu">
+                            <div class="cpu-core-anim">
+                                <div class="cpu-chip">
+                                    <span class="cpu-clock-display" id="cpu-clock-label">5.0 GHz</span>
+                                    <div class="clock-waves"></div>
+                                </div>
+                            </div>
+                            <div class="node-label">CPU Simulada</div>
+                            <div class="node-sub">Desglose en Ciclos de Reloj</div>
+                            <div class="node-tag-sub">Ciclo = 1 instrucción atómica</div>
+                        </div>
+
+                        <div class="pipe-arrow">
+                            <span class="arrow-line"></span>
+                            <span class="pulse-particle"></span>
+                        </div>
+
+                        <!-- Step 3: Atomic Operations -->
+                        <div class="pipeline-node node-large node-ops">
+                            <div class="ops-breakdown">
+                                <div class="op-line">1 Asignación inicial = <strong>1 op</strong></div>
+                                <div class="op-line">n Comparaciones bucle = <strong>n + 1 ops</strong></div>
+                                <div class="op-line">Cuerpo del bucle = <strong>2n ops</strong></div>
+                            </div>
+                            <div class="node-label">Pasos Elementales</div>
+                            <div class="node-sub">Conteo atómico formal</div>
+                        </div>
+
+                        <div class="pipe-arrow">
+                            <span class="arrow-line"></span>
+                            <span class="pulse-particle"></span>
+                        </div>
+
+                        <!-- Step 4: T(n) Result -->
+                        <div class="pipeline-node node-large node-result">
+                            <div class="tn-result-box">
+                                <span class="tn-badge">INVARIANTE UNIVERSAL</span>
+                                <span class="tn-val mono">$T(n) = 3n + 2$</span>
+                            </div>
+                            <div class="node-label">Función de Costo</div>
+                            <div class="node-sub" id="hw-time-sub">Tiempo: ~0.0008 ms (Varía) · Ops: Constantes</div>
+                        </div>
+                    </div>
+
+                    <!-- Bottom Insight Callout -->
+                    <div class="pipeline-insight">
+                        <strong>Principio Clave:</strong> Un procesador a 5 GHz tarda $50\times$ menos tiempo físico que uno a 100 MHz, pero <strong>ambos ejecutan exactamente las mismas $3n + 2$ operaciones</strong>. Por eso $T(n)$ mide la eficiencia del algoritmo, no el precio del procesador.
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==========================================
+             SLIDE 5: LAS REGLAS DE SIMPLIFICACIÓN (BIG O)
+             ========================================== -->
+        <div class="slide" data-i="5">
+            <div class="bgw">RULES</div>
+            <div class="slide-eyebrow e">05 // COMPLEJIDAD ASINTÓTICA</div>
+            <div class="inner">
+                <h2 class="e">Las Reglas de <span class="a-line">Simplificación (Big O)</span></h2>
+                <p class="lead e">Cuando $n$ tiende a infinito, los factores menores pierden relevancia. La notación asintótica filtra el ruido mediante 3 principios matemáticos:</p>
+
+                <!-- Three Spacious Interactive Rule Cards -->
+                <div class="g3">
+                    <div class="card rule-card e">
+                        <div class="rule-num">01</div>
+                        <div class="pill-badge-purple pill-purple">Eliminar Constantes</div>
+                        <h3 class="mono">$5n \longrightarrow O(n)$</h3>
+                        <p class="rule-desc">Los factores multiplicativos o aditivos desplazan la escala vertical, pero no alteran la curvatura ni la velocidad de crecimiento al infinito.</p>
+                        <div class="rule-formula-badge">$c \cdot f(n) \implies O(f(n))$</div>
+                    </div>
+
+                    <div class="card rule-card e">
+                        <div class="rule-num">02</div>
+                        <div class="pill-badge-purple pill-purple">Término Dominante</div>
+                        <h3 class="mono">$n^3 + n^2 \longrightarrow O(n^3)$</h3>
+                        <p class="rule-desc">El término con mayor exponente monopoliza más del 99.9% del tiempo de cómputo para valores masivos de entrada.</p>
+                        <div class="rule-formula-badge">$n^3 \gg n^2 \gg n \gg 1$</div>
+                    </div>
+
+                    <div class="card rule-card e">
+                        <div class="rule-num">03</div>
+                        <div class="pill-badge-purple pill-purple">Suma y Producto</div>
+                        <h3 class="mono">Bloques $(+)$ vs Bucles $(\times)$</h3>
+                        <p class="rule-desc">Bloques secuenciales suman sus costos ($O(A + B) = O(\max(A, B))$); bucles anidados multiplican sus iteraciones ($O(A \times B)$).</p>
+                        <div class="rule-formula-badge">$O(A + B)$ vs $O(A \times B)$</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==========================================
+             SLIDE 6: DEMOSTRACIÓN DINÁMICA DE DESVANECIMIENTO
+             ========================================== -->
+        <div class="slide" data-i="6">
+            <div class="bgw">FADE</div>
+            <div class="slide-eyebrow e">06 // REDUCCIÓN ASINTÓTICA EN VIVO</div>
+            <div class="inner">
+                <h2 class="e">Demostración Dinámica: <span class="a-line">Fade-Out</span></h2>
+                <p class="lead e">Observa cómo las constantes y los términos de menor orden se desvanecen paso a paso hasta dejar únicamente la clase dominante.</p>
+
+                <!-- Full Screen Simplification Stage -->
+                <div class="simplification-box sim-full e">
+                    <div class="sim-header">
+                        <div class="sim-title-group">
+                            <span class="sim-tag">LABORATORIO DE REDUCCIÓN EN VIVO</span>
+                            <span class="sim-sub">Haz clic en "Ejecutar Simplificación" o pulsa sobre la expresión</span>
+                        </div>
+                        <div class="sim-actions">
+                            <button class="stage-btn" id="btn-run-sim" onclick="runFadeOutAnimation()">
+                                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+                                <span>Ejecutar Simplificación</span>
+                            </button>
+                            <button class="stage-btn-ghost" onclick="resetFadeOutAnimation()">
+                                <span>Reiniciar</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- The Expression Container -->
+                    <div class="expression-stage" id="expression-stage" onclick="runFadeOutAnimation()" title="Haz clic para simplificar">
+                        <div class="math-expr-wrap" id="math-expr-wrap">
+                            <span class="expr-term term-coeff" id="part-coeff">5</span>
+                            <span class="expr-term term-cubic" id="part-cubic">n³</span>
+                            <span class="expr-term term-plus1" id="part-plus1">&nbsp;+&nbsp;</span>
+                            <span class="expr-term term-linear" id="part-linear">20n</span>
+                            <span class="expr-term term-plus2" id="part-plus2">&nbsp;+&nbsp;</span>
+                            <span class="expr-term term-const" id="part-const">1000</span>
+                        </div>
+                        <div class="big-o-result-target" id="big-o-target">
+                            <span class="big-o-glow">$O(n^3)$</span>
+                        </div>
+                    </div>
+
+                    <!-- Step Tracker Pills -->
+                    <div class="sim-steps-tracker">
+                        <span class="step-dot-pill active" id="step-pill-1" onclick="resetFadeOutAnimation()">1. Polinomio Completo</span>
+                        <span class="step-dot-pill" id="step-pill-2" onclick="runFadeOutAnimation()">2. Desvanecer Constante (+1000)</span>
+                        <span class="step-dot-pill" id="step-pill-3" onclick="runFadeOutAnimation()">3. Desvanecer Término Menor (+20n)</span>
+                        <span class="step-dot-pill" id="step-pill-4" onclick="runFadeOutAnimation()">4. Eliminar Coeficiente (5)</span>
+                        <span class="step-dot-pill" id="step-pill-5" onclick="runFadeOutAnimation()">5. Cota Asintótica O(n³)</span>
+                    </div>
+
+                    <!-- Detailed Explanation Note -->
+                    <div class="fade-explanation-box">
+                        <div class="fade-note-item">
+                            <span class="note-bullet">→</span> <strong>Paso 2:</strong> Al crecer $n$, $1.000$ es una fracción despreciable del total.
+                        </div>
+                        <div class="fade-note-item">
+                            <span class="note-bullet">→</span> <strong>Paso 3:</strong> Para $n = 100.000$, $n^3$ es $10.000.000.000\times$ más grande que $20n$.
+                        </div>
+                        <div class="fade-note-item">
+                            <span class="note-bullet">→</span> <strong>Paso 4:</strong> La constante $5$ no cambia la tasa de aceleración; se absorbe en la notación $O(n^3)$.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==========================================
+             SLIDE 7: LA DEFINICIÓN FORMAL DE O(g(n))
+             ========================================== -->
+        <div class="slide" data-i="7">
+            <div class="bgw">FORMAL</div>
+            <div class="slide-eyebrow e">07 // COTA SUPERIOR ASINTÓTICA</div>
+            <div class="inner">
+                <h2 class="e">La Definición Formal de <span class="a-line">O(g(n))</span></h2>
+                <p class="lead e">Big O no es una aproximación empírica ni vaga; es una cota matemática rigurosa con cuantificadores universales bien definidos.</p>
+
+                <!-- Formal Math Formula Box -->
+                <div class="formal-definition-card formal-prominent e">
+                    <div class="formal-card-header">
+                        <span class="pill-badge-purple pill-purple">Definición Formal</span>
+                        <span class="header-desc">Condición necesaria y suficiente para pertenecer a la familia $O(g(n))$</span>
+                    </div>
+                    <div class="formal-formula-display">
+                        $$\exists\, c > 0,\; n_0 > 0 \quad : \quad 0 \le f(n) \le c \cdot g(n) \quad \forall n \ge n_0$$
+                    </div>
+                    <div class="formula-breakdown-grid">
+                        <div class="f-col">
+                            <strong>$f(n)$</strong>
+                            <span>Costo real del algoritmo $T(n)$ a analizar.</span>
+                        </div>
+                        <div class="f-col">
+                            <strong>$g(n)$</strong>
+                            <span>Función modelo de referencia (ej: $n, n^2, n^3$).</span>
+                        </div>
+                        <div class="f-col">
+                            <strong>$c > 0$</strong>
+                            <span>Factor multiplicador constante de holgura.</span>
+                        </div>
+                        <div class="f-col">
+                            <strong>$n_0 > 0$</strong>
+                            <span>Umbral crítico de cruce en el eje $X$.</span>
+                        </div>
+                        <div class="f-col">
+                            <strong>$\forall n \ge n_0$</strong>
+                            <span>Garantía absoluta que jamás vuelve a romperse.</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Interpretation Note -->
+                <div class="card formal-note-card e">
+                    <h3 class="mono-title">¿Qué significa en la práctica de ingeniería?</h3>
+                    <p>Garantiza el <strong>peor escenario posible</strong>. Si un algoritmo es $O(n^2)$, su tiempo de respuesta podrá ser menor en casos favorables, pero jamás superará una curva proporcional a $n^2$ una vez rebasado el umbral $n_0$.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==========================================
+             SLIDE 8: COTA SUPERIOR ASINTÓTICA: GRÁFICO CARTESIANO
+             ========================================== -->
+        <div class="slide" data-i="8">
+            <div class="bgw">GRAPH</div>
+            <div class="slide-eyebrow e">08 // VISUALIZACIÓN GEOMÉTRICA</div>
+            <div class="inner">
+                <h2 class="e">Geometría de la <span class="a-line">Cota Superior</span></h2>
+                <p class="lead e">El plano cartesiano muestra el cruce asintótico: antes de $n_0$ las constantes distorsionan la curva; después de $n_0$, la cota superior jamás se rompe.</p>
+
+                <!-- Vectorial Cartesian Graph Card -->
+                <div class="cartesian-graph-card graph-expanded e">
+                    <div class="graph-header">
+                        <div class="graph-legend">
+                            <span class="legend-item"><span class="leg-line leg-green"></span> <strong>T(n)</strong> (Algoritmo Real)</span>
+                            <span class="legend-item"><span class="leg-line leg-blue"></span> <strong>c · g(n)</strong> (Cota Superior)</span>
+                            <span class="legend-item"><span class="leg-line leg-dashed"></span> <strong>n₀</strong> (Umbral de Cruce)</span>
+                            <span class="legend-item"><span class="leg-box leg-shaded"></span> <strong>Zona Inviolable ($n \ge n_0$)</strong></span>
+                        </div>
+                        <div class="graph-hover-hint">
+                            Mueve el cursor sobre el gráfico para explorar el cruce en $n_0$
+                        </div>
+                    </div>
+
+                    <div class="svg-container svg-large" id="graph-container">
+                        <svg viewBox="0 0 960 300" class="graph-svg" id="cartesian-svg" preserveAspectRatio="xMidYMid meet">
+                            <defs>
+                                <linearGradient id="shadedGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+                                    <stop offset="0%" stop-color="#7170ff" stop-opacity="0.3"/>
+                                    <stop offset="100%" stop-color="#7170ff" stop-opacity="0.03"/>
+                                </linearGradient>
+                                <linearGradient id="lineGreenGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+                                    <stop offset="0%" stop-color="#10b981"/>
+                                    <stop offset="100%" stop-color="#34d399"/>
+                                </linearGradient>
+                                <linearGradient id="lineBlueGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+                                    <stop offset="0%" stop-color="#5e6ad2"/>
+                                    <stop offset="100%" stop-color="#93c5fd"/>
+                                </linearGradient>
+                            </defs>
+
+                            <!-- Grid Lines -->
+                            <g class="grid-lines" stroke="rgba(255,255,255,0.06)" stroke-dasharray="4,4">
+                                <line x1="80" y1="45" x2="900" y2="45"/>
+                                <line x1="80" y1="110" x2="900" y2="110"/>
+                                <line x1="80" y1="175" x2="900" y2="175"/>
+                                <line x1="80" y1="240" x2="900" y2="240"/>
+                                <line x1="280" y1="25" x2="280" y2="260"/>
+                                <line x1="480" y1="25" x2="480" y2="260"/>
+                                <line x1="680" y1="25" x2="680" y2="260"/>
+                                <line x1="880" y1="25" x2="880" y2="260"/>
+                            </g>
+
+                            <!-- Axes -->
+                            <g class="axes" stroke="rgba(255,255,255,0.25)" stroke-width="1.6">
+                                <!-- X Axis -->
+                                <line x1="80" y1="250" x2="920" y2="250"/>
+                                <polyline points="914,246 922,250 914,254" fill="none"/>
+                                <!-- Y Axis -->
+                                <line x1="90" y1="260" x2="90" y2="25"/>
+                                <polyline points="86,32 90,24 94,32" fill="none"/>
+                            </g>
+
+                            <!-- Axis Labels -->
+                            <text x="915" y="275" fill="#8a8f98" font-size="12" font-family="'DM Mono', monospace">Tamaño de Entrada (n) →</text>
+                            <text x="30" y="28" fill="#8a8f98" font-size="12" font-family="'DM Mono', monospace">Tiempo / Ops T(n) ↑</text>
+
+                            <!-- Shaded Area for n >= n0 -->
+                            <path id="graph-shaded-area" class="shaded-area" d="M 390,180 Q 600,95 880,42 L 880,250 L 390,250 Z" fill="url(#shadedGrad)"/>
+
+                            <!-- Green Curve: T(n) -->
+                            <path id="curve-tn" class="graph-curve curve-tn" d="M 90,215 C 180,195 280,205 390,180 C 520,155 700,125 880,95" fill="none" stroke="url(#lineGreenGrad)" stroke-width="2.0" stroke-linecap="round"/>
+
+                            <!-- Blue Curve: c · g(n) -->
+                            <path id="curve-cgn" class="graph-curve curve-cgn" d="M 90,245 C 190,240 290,225 390,180 C 500,130 680,75 880,42" fill="none" stroke="url(#lineBlueGrad)" stroke-width="2.2" stroke-linecap="round"/>
+
+                            <!-- Dashed Line n0 -->
+                            <line id="line-n0" class="n0-dashed-line" x1="390" y1="30" x2="390" y2="250" stroke="#7170ff" stroke-width="1.4" stroke-dasharray="6,6"/>
+
+                            <!-- Crossing Point Circle at n0 -->
+                            <circle id="point-crossing" cx="390" cy="180" r="6" fill="#fff" stroke="#7170ff" stroke-width="3"/>
+
+                            <!-- Labels in Graph -->
+                            <text x="390" y="272" text-anchor="middle" fill="#7170ff" font-weight="700" font-size="13" font-family="'DM Mono', monospace">n₀ (Umbral)</text>
+                            <text x="890" y="38" fill="#93c5fd" font-size="13" font-weight="600" font-family="'DM Mono', monospace">c · g(n)</text>
+                            <text x="890" y="95" fill="#34d399" font-size="13" font-weight="600" font-family="'DM Mono', monospace">T(n)</text>
+
+                            <!-- Interactive Scrub Line -->
+                            <g id="interactive-scrub" style="display: none;">
+                                <line id="scrub-line" x1="390" y1="30" x2="390" y2="250" stroke="rgba(255,255,255,0.7)" stroke-width="1.2" stroke-dasharray="3,3"/>
+                                <circle id="scrub-dot-cgn" cx="390" cy="180" r="4" fill="#93c5fd"/>
+                                <circle id="scrub-dot-tn" cx="390" cy="180" r="4" fill="#34d399"/>
+                            </g>
+                        </svg>
+                    </div>
+
+                    <!-- Dynamic Tooltip / Status Bar -->
+                    <div class="graph-status-bar" id="graph-status-bar">
+                        <div class="status-box-tag">GARANTÍA ASINTÓTICA:</div>
+                        <div class="status-box-text" id="graph-status-text">
+                            En el punto <strong>$n_0$</strong>, la curva $c \cdot g(n)$ cruza por encima de $T(n)$. Para todo <strong>$n \ge n_0$</strong>, la cota superior jamás vuelve a romperse.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==========================================
+             SLIDE 9: DEMOSTRACIÓN PRÁCTICA: CASO CÚBICO
+             ========================================== -->
+        <div class="slide" data-i="9">
+            <div class="bgw">PROOF</div>
+            <div class="slide-eyebrow e">09 // CASO DE ESTUDIO: T(n) = 2n³ + n² + 100</div>
+            <div class="inner">
+                <h2 class="e">Demostración Práctica: <span class="a-line">El Caso Cúbico</span></h2>
+                <p class="lead e">Comprobación formal paso a paso para verificar que $T(n) = 2n^3 + n^2 + 100 \in O(n^3)$ encontrando los testigos matemáticos $c$ y $n_0$.</p>
+
+                <!-- Three Step Breakdown Cards -->
+                <div class="g3">
+                    <div class="card proof-step-card e">
+                        <div class="deco-num">01</div>
+                        <div class="pill-badge-purple pill-purple">Paso 1: Filtro Dominante</div>
+                        <h3 class="mono-title">Identificar $g(n)$</h3>
+                        <p class="mb-10">Comparamos los órdenes de magnitud de cada término individual:</p>
+                        <div class="math-step-box">
+                            $$2n^3 \gg n^2 \gg 100$$
+                        </div>
+                        <div class="step-conclusion">
+                            <strong>Conjetura:</strong> La cota asintótica es cúbica, por tanto establecemos <strong>$g(n) = n^3$</strong>.
+                        </div>
+                    </div>
+
+                    <div class="card proof-step-card e">
+                        <div class="deco-num">02</div>
+                        <div class="pill-badge-purple pill-purple">Paso 2: Inecuación Formal</div>
+                        <h3 class="mono-title">Plantear la Condición</h3>
+                        <p class="mb-10">Por definición de Big O, debemos hallar constantes $c > 0$ y $n_0 > 0$ tales que:</p>
+                        <div class="math-step-box">
+                            $$2n^3 + n^2 + 100 \le c \cdot n^3$$
+                        </div>
+                        <div class="step-conclusion">
+                            Para todo valor de $n \ge n_0$.
+                        </div>
+                    </div>
+
+                    <div class="card proof-step-card e">
+                        <div class="deco-num">03</div>
+                        <div class="pill-badge-green pill-green">Paso 3: Selección de Testigos</div>
+                        <h3 class="mono-title">Propuesta: $n_0 = 10, \; c = 3$</h3>
+                        <p class="mb-10">Si fijamos $n \ge 10$, podemos acotar los términos menores usando potencias de $n^3$:</p>
+                        <div class="math-step-box mini-step">
+                            $n^2 \le \frac{1}{10}n^3 = 0.1n^3$<br>
+                            $100 \le \frac{100}{1000}n^3 = 0.1n^3$<br>
+                            $2n^3 + 0.1n^3 + 0.1n^3 = \mathbf{2.2n^3} \le \mathbf{3n^3}$
+                        </div>
+                        <div class="step-conclusion">
+                            La desigualdad es estrictamente válida con $c = 3$ y $n_0 = 10$. $\blacksquare$
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==========================================
+             SLIDE 10: SUSTITUCIÓN DE VALORES EN VIVO
+             ========================================== -->
+        <div class="slide" data-i="10">
+            <div class="bgw">LAB</div>
+            <div class="slide-eyebrow e">10 // COMPROBACIÓN NUMÉRICA EN VIVO</div>
+            <div class="inner">
+                <h2 class="e">Sustitución Numérica <span class="a-line">en Vivo</span></h2>
+                <p class="lead e">Laboratorio interactivo: sustituye valores reales de $n$ para verificar que la cota $c \cdot g(n) = 3n^3$ se mantiene superior a $T(n)$ en todo momento.</p>
+
+                <!-- Full Width Substitution Card -->
+                <div class="substitution-card sub-expanded e">
+                    <div class="sub-header">
+                        <div class="sub-header-left">
+                            <span class="sub-tag">SUSTITUCIÓN DE VALORES REALES</span>
+                            <span class="sub-desc">Testigos matemáticos fijos: $c = 3$ y $n_0 = 10$</span>
+                        </div>
+                        <div class="sub-controls">
+                            <span class="sub-ctrl-label">Selecciona el valor de $n$:</span>
+                            <div class="n-selector-pills">
+                                <button class="n-btn active" id="n-btn-10" onclick="setProofN(10)">n = 10 (Umbral)</button>
+                                <button class="n-btn" id="n-btn-15" onclick="setProofN(15)">n = 15</button>
+                                <button class="n-btn" id="n-btn-20" onclick="setProofN(20)">n = 20</button>
+                                <button class="n-btn" id="n-btn-50" onclick="setProofN(50)">n = 50</button>
+                                <button class="n-btn" id="n-btn-100" onclick="setProofN(100)">n = 100</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Inequality Box -->
+                    <div class="inequality-live-box">
+                        <!-- Left Side: T(n) -->
+                        <div class="ineq-col ineq-left">
+                            <span class="ineq-col-label">COSTO REAL $T(n)$</span>
+                            <span class="ineq-col-formula mono" id="formula-tn-live">2(10)³ + (10)² + 100</span>
+                            <span class="ineq-col-val mono" id="val-tn-live">2.200</span>
+                        </div>
+
+                        <!-- Center: Relation & Checkmark -->
+                        <div class="ineq-center">
+                            <div class="relation-symbol">$\le$</div>
+                            <div class="verified-badge-wrap" id="verified-badge-wrap">
+                                <span class="check-icon">✓</span>
+                                <span class="check-text">Cota Superior Válida</span>
+                            </div>
+                        </div>
+
+                        <!-- Right Side: c · g(n) -->
+                        <div class="ineq-col ineq-right">
+                            <span class="ineq-col-label">COTA SUPERIOR $c \cdot g(n)$</span>
+                            <span class="ineq-col-formula mono" id="formula-cgn-live">3 · (10)³</span>
+                            <span class="ineq-col-val mono" id="val-cgn-live">3.000</span>
+                        </div>
+                    </div>
+
+                    <!-- Live Narrative Note -->
+                    <div class="sub-footer-note" id="sub-footer-note">
+                        Demostración en $n = 10$: <strong>2.200 $\le$ 3.000</strong>. Como 2.200 es menor que 3.000, la cota superior se cumple holgadamente por una diferencia de <strong>800 operaciones</strong>.
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==========================================
+             SLIDE 11: CIERRE & PREGUNTAS
+             ========================================== -->
+        <div class="slide slide-thanks" data-i="11">
+            <div class="bgw">BIG O</div>
+            <div class="slide-eyebrow e">11 // CIERRE &amp; PREGUNTAS</div>
+            <div class="inner thanks-inner">
+                <div class="thanks-header-center">
+                    <h2 class="thanks-title e">¡Muchas <span class="a-line">Gracias!</span></h2>
+                    <p class="thanks-sub e">Big O: El Costo Real del Crecimiento</p>
+                </div>
+
+                <!-- Epic Animated Big O Centerpiece ("Arrecha") -->
+                <div class="big-o-stage e" id="big-o-epic-reactor">
+                    <!-- Concentric Glow Shockwaves & Orbital Rings -->
+                    <div class="reactor-pulse-bg"></div>
+                    <div class="reactor-orbit ring-1"></div>
+                    <div class="reactor-orbit ring-2"></div>
+                    <div class="reactor-orbit ring-3"></div>
+
+                    <!-- Orbiting Satellites with Complexity Classes -->
+                    <div class="satellites-cluster">
+                        <div class="sat-item sat-pos-1" title="Constante"><span class="sat-dot dot-green"></span>$O(1)$</div>
+                        <div class="sat-item sat-pos-2" title="Logarítmico"><span class="sat-dot dot-cyan"></span>$O(\log n)$</div>
+                        <div class="sat-item sat-pos-3" title="Lineal"><span class="sat-dot dot-blue"></span>$O(n)$</div>
+                        <div class="sat-item sat-pos-4" title="Cuasilineal"><span class="sat-dot dot-purple"></span>$O(n \log n)$</div>
+                        <div class="sat-item sat-pos-5" title="Cuadrático"><span class="sat-dot dot-amber"></span>$O(n^2)$</div>
+                        <div class="sat-item sat-pos-6" title="Exponencial"><span class="sat-dot dot-red"></span>$O(2^n)$</div>
+                        <div class="sat-item sat-pos-7" title="Factorial"><span class="sat-dot dot-pink"></span>$O(n!)$</div>
+                    </div>
+
+                    <!-- Central Majestic Big O Glyph -->
+                    <div class="reactor-core">
+                        <div class="core-aura"></div>
+                        <div class="core-glyph">
+                            <span class="core-letter">O</span><span class="core-paren">(n)</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Minimalist Q&A Footer Badge -->
+                <div class="thanks-footer-badge e">
+                    <span class="pulse-dot"></span>
+                    <span>Espacio Abierto para Preguntas &amp; Discusión</span>
+                </div>
+            </div>
+        </div>
+
+    </div><!-- /#deck -->
+
+    <!-- HUD Navigation Controls -->
+    <div id="dots"></div>
+    <div id="hint">Usa Scroll o Flechas para navegar <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 5v14M5 12l7 7 7-7"/></svg></div>
+    <div id="counter"><b>01</b> / 11</div>
+
+    <!-- CDN Dependencies -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+    <script src="vision.js"></script>
+</body>
+</html>
