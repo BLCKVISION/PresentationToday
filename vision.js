@@ -166,6 +166,7 @@ document.addEventListener("DOMContentLoaded", () => {
     let wheelTimeout = null;
     let lastWheelDelta = 0;
     window.addEventListener('wheel', e => {
+        if (window.isBlackout) return;
         if (wheelTimeout) return;
         lastWheelDelta = e.deltaY;
         wheelTimeout = setTimeout(() => {
@@ -181,6 +182,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }, { passive: true });
 
     window.addEventListener('touchend', e => {
+        if (window.isBlackout) return;
         const delta = touchStartY - e.changedTouches[0].clientY;
         if (Math.abs(delta) > 45) {
             if (delta > 0) goTo(window.cur + 1);
@@ -189,6 +191,22 @@ document.addEventListener("DOMContentLoaded", () => {
     }, { passive: true });
 
     window.addEventListener('keydown', e => {
+        // If presentation is in blackout curtain, double click or pressing Enter/Space/B unlocks it
+        if (window.isBlackout) {
+            if (['Enter', 'Space', 'KeyB', 'PageDown', 'ArrowRight', 'ArrowDown'].includes(e.code) || ['b', 'B', 'Enter'].includes(e.key)) {
+                e.preventDefault();
+                window.unlockBlackout();
+            }
+            return;
+        }
+
+        // Toggle blackout mode with 'B' during presentation
+        if (e.key === 'b' || e.key === 'B') {
+            e.preventDefault();
+            window.toggleBlackout();
+            return;
+        }
+
         if (['ArrowDown', 'ArrowRight', 'PageDown'].includes(e.key)) {
             e.preventDefault();
             goTo(window.cur + 1);
@@ -217,9 +235,97 @@ document.addEventListener("DOMContentLoaded", () => {
     window.addEventListener('keydown', hideHint, { once: true });
     window.addEventListener('touchend', hideHint, { once: true });
 
-    // Initial entrance on slide 0
+    // ─── 4. BLACKOUT CURTAIN CONTROLLER (INICIO EN NEGRO & DOBLE CLIC) ───
+    window.isBlackout = true;
+    const curtain = document.getElementById('blackout-curtain');
+    const hudElements = [
+        dotsEl,
+        hintEl,
+        counterEl,
+        document.querySelector('.deck-brand-pill'),
+        document.querySelector('.deck-bottom-left')
+    ].filter(Boolean);
+
+    // Initial silent preparation of Slide 0
+    gsap.set(window.slides[0].querySelectorAll('.e'), { opacity: 0 });
+    const heroCurves = Array.from(window.slides[0].querySelectorAll('.hero-path'));
+    if (heroCurves.length > 0) {
+        gsap.set(heroCurves, { strokeDashoffset: 800 });
+    }
+    gsap.set(hudElements, { opacity: 0 });
     window.updateHUD(0);
-    window.staggerIn(window.slides[0], 1);
+
+    window.unlockBlackout = function() {
+        if (!window.isBlackout) return;
+        window.isBlackout = false;
+
+        if (curtain) {
+            gsap.to(curtain, {
+                opacity: 0,
+                duration: 0.9,
+                ease: 'power2.inOut',
+                onComplete: () => {
+                    curtain.style.display = 'none';
+                }
+            });
+        }
+
+        // Fade in HUD gracefully
+        gsap.to(hudElements, { opacity: 1, duration: 0.8, stagger: 0.06, ease: 'power2.out' });
+
+        // Trigger entrance animation on Slide 0 and start drawing laser curves
+        window.staggerIn(window.slides[0], 1);
+    };
+
+    window.toggleBlackout = function() {
+        if (!curtain) return;
+        if (window.isBlackout) {
+            window.unlockBlackout();
+        } else {
+            window.isBlackout = true;
+            curtain.style.display = 'flex';
+            gsap.to(curtain, { opacity: 1, duration: 0.5, ease: 'power2.inOut' });
+            gsap.to(hudElements, { opacity: 0, duration: 0.4 });
+        }
+    };
+
+    if (curtain) {
+        // Double-click on curtain unlocks
+        curtain.addEventListener('dblclick', e => {
+            e.preventDefault();
+            e.stopPropagation();
+            window.unlockBlackout();
+        });
+
+        // Touch double-tap support for mobile / tablets
+        let lastTapTime = 0;
+        curtain.addEventListener('touchend', e => {
+            const now = Date.now();
+            if (now - lastTapTime < 380 && now - lastTapTime > 0) {
+                e.preventDefault();
+                window.unlockBlackout();
+            }
+            lastTapTime = now;
+        });
+
+        // Subtle hint when moving mouse over the black screen
+        let hintTimer = null;
+        window.addEventListener('mousemove', () => {
+            if (!window.isBlackout) return;
+            curtain.classList.add('show-hint');
+            clearTimeout(hintTimer);
+            hintTimer = setTimeout(() => {
+                if (window.isBlackout) curtain.classList.remove('show-hint');
+            }, 2400);
+        });
+    }
+
+    // Window double-click fallback
+    window.addEventListener('dblclick', () => {
+        if (window.isBlackout) {
+            window.unlockBlackout();
+        }
+    });
 
     // Initial KaTeX math formatting
     renderMath();

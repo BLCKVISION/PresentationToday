@@ -9,8 +9,10 @@ Presentación interactiva y guión oficial sobre **Big O: El Costo Real del Crec
 - **`vision.css`**: Sistema de diseño visual y estilos futuristas para la presentación.
 - **`vision.js`**: Controlador de navegación, transiciones de diapositivas y simulaciones interactivas.
 
-## ⌨️ Atajos de Teclado en la Presentación
+## ⌨️ Atajos de Teclado y Controles
 
+- **Doble Clic** (o <kbd>Enter</kbd> / <kbd>Espacio</kbd> / <kbd>B</kbd>): Revela la presentación desde la pantalla en negro inicial.
+- <kbd>B</kbd>: Alternar pantalla negra (Blackout) en cualquier momento de la presentación.
 - <kbd>↓</kbd> / <kbd>→</kbd> / <kbd>AvPág</kbd>: Siguiente diapositiva.
 - <kbd>↑</kbd> / <kbd>←</kbd> / <kbd>RePág</kbd>: Diapositiva anterior.
 - <kbd>Espacio</kbd>: Siguiente diapositiva (en Diapositiva 02 alterna entre $n = 10$ y $n = 100.000$).
